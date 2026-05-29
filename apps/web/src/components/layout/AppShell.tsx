@@ -74,14 +74,14 @@ export function AppShell({children}: AppShellProps) {
           </span>
           <span className="app-shell__brand-name">Football Value AI</span>
         </div>
-        <Menu mode="inline" selectedKeys={[selectedKey]} items={menuItems} />
+        <Menu mode="inline" theme="dark" selectedKeys={[selectedKey]} items={menuItems} />
         <div className="app-shell__sidebar-footer">
           <span className="app-shell__workspace">{shellCopy[activeLocale].workspace}</span>
           <span className="app-shell__workspace-meta">{shellCopy[activeLocale].workspaceMeta}</span>
         </div>
       </Sider>
 
-      <Layout>
+      <Layout className="app-shell__main">
         <Header className="app-shell__topbar">
           <div className="app-shell__topbar-copy">
             <h1 className="app-shell__title">{shellCopy[activeLocale].title}</h1>

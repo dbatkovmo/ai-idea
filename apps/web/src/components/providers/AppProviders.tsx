@@ -27,6 +27,32 @@ export function AppProviders({children}: AppProvidersProps) {
           borderRadius: 12,
           fontFamily:
             "Inter, Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        },
+        components: {
+          Layout: {
+            bodyBg: '#0D0D0D',
+            headerBg: '#0D0D0D',
+            headerHeight: 70,
+            headerPadding: '0 28px',
+            siderBg: '#111111',
+            triggerBg: '#171717',
+            triggerColor: '#A1A1AA'
+          },
+          Menu: {
+            darkItemBg: '#111111',
+            darkSubMenuItemBg: '#111111',
+            darkItemSelectedBg: '#1F1F1F',
+            darkItemSelectedColor: '#FAFAFA',
+            darkItemColor: '#A1A1AA',
+            darkItemHoverBg: '#1A1A1A',
+            darkItemHoverColor: '#FAFAFA',
+            itemBg: '#111111',
+            itemSelectedBg: '#1F1F1F',
+            itemSelectedColor: '#FAFAFA',
+            itemColor: '#A1A1AA',
+            itemHoverBg: '#1A1A1A',
+            itemHoverColor: '#FAFAFA'
+          }
         }
       }}
     >

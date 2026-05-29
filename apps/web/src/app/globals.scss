@@ -31,10 +31,17 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at top right, rgba(16, 163, 127, 0.05), transparent 32%),
-    var(--bg);
+    var(--bg) !important;
   color: var(--text);
   font-family: Inter, Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   letter-spacing: 0;
+}
+
+html,
+body,
+.ant-app,
+.ant-layout {
+  background-color: var(--bg) !important;
 }
 
 button,
@@ -46,7 +53,14 @@ textarea {
 
 .app-shell {
   min-height: 100vh;
-  background: transparent;
+  background:
+    radial-gradient(circle at top right, rgba(16, 163, 127, 0.05), transparent 32%),
+    var(--bg) !important;
+
+  &__main {
+    min-width: 0;
+    background: transparent !important;
+  }
 
   &__sidebar {
     border-right: 1px solid var(--border);
@@ -132,7 +146,7 @@ textarea {
     min-height: 70px;
     padding: 0 28px;
     border-bottom: 1px solid var(--border);
-    background: rgba(13, 13, 13, 0.86);
+    background: rgba(13, 13, 13, 0.92) !important;
     backdrop-filter: blur(16px);
     line-height: normal;
   }
