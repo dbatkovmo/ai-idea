@@ -89,6 +89,7 @@ export function AppShell({children}: AppShellProps) {
           </div>
           <Space className="app-shell__topbar-actions" size={10}>
             <Segmented
+              className="language-switch"
               aria-label="Language"
               size="small"
               value={activeLocale}
@@ -99,7 +100,12 @@ export function AppShell({children}: AppShellProps) {
               onChange={(value) => handleLocaleChange(String(value))}
             />
             <Tooltip title={shellCopy[activeLocale].validation}>
-              <Button aria-label={shellCopy[activeLocale].validation} icon={<ShieldCheck size={17} />} />
+              <Button
+                aria-label={shellCopy[activeLocale].validation}
+                className="topbar-icon-button"
+                icon={<ShieldCheck size={16} />}
+                type="text"
+              />
             </Tooltip>
           </Space>
         </Header>
