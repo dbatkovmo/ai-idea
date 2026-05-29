@@ -47,7 +47,7 @@ export function ModelStatsView() {
               <strong>{(stats.hitRate * 100).toFixed(1)}%</strong>
             </div>
             <div className="metric-list__row">
-              <span>{isRu ? 'Размер выборки' : 'Sample size'}</span>
+              <span>{isRu ? '\u0420\u0430\u0437\u043c\u0435\u0440 \u0432\u044b\u0431\u043e\u0440\u043a\u0438' : 'Sample size'}</span>
               <strong>{stats.sampleSize}</strong>
             </div>
           </div>

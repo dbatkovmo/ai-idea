@@ -80,7 +80,7 @@ export function BacktestingView() {
           </div>
           <div className="metric-list">
             <div className="metric-list__row">
-              <span>{isRu ? 'Разделение по времени' : 'Time-series split'}</span>
+              <span>{isRu ? '\u0420\u0430\u0437\u0434\u0435\u043b\u0435\u043d\u0438\u0435 \u043f\u043e \u0432\u0440\u0435\u043c\u0435\u043d\u0438' : 'Time-series split'}</span>
               <strong>{isRu ? 'Обязательно' : 'Required'}</strong>
             </div>
             <div className="metric-list__row">

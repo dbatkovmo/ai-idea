@@ -72,7 +72,7 @@ export function MatchesView() {
             }
           />
         ) : (
-          <div style={{overflowX: 'auto'}}>
+          <div className="table-scroll">
             <table className="value-table">
               <thead className="value-table__head">
                 <tr>

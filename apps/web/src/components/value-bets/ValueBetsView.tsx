@@ -25,7 +25,7 @@ export function ValueBetsView() {
     <main className="dashboard">
       <section className="page-header">
         <div>
-          <p className="page-header__eyebrow">{isRu ? 'Рыночное преимущество' : 'Market edge'}</p>
+          <p className="page-header__eyebrow">{isRu ? '\u0420\u044b\u043d\u043e\u0447\u043d\u043e\u0435 \u043f\u0440\u0435\u0438\u043c\u0443\u0449\u0435\u0441\u0442\u0432\u043e' : 'Market edge'}</p>
           <h2 className="page-header__title">{isRu ? 'Value Bets' : 'Value Bets'}</h2>
         </div>
         <DataStatus {...valueBetsState} />
@@ -35,8 +35,8 @@ export function ValueBetsView() {
         <div className="dashboard__filters">
           <Select
             aria-label={isRu ? 'Лига' : 'League'}
+            className="filter-control"
             value={league}
-            style={{width: 180}}
             onChange={setLeague}
             options={[
               {value: 'all', label: isRu ? 'Все лиги' : 'All leagues'},

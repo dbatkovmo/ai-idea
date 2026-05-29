@@ -1,7 +1,7 @@
 'use client';
 
 import {flexRender, getCoreRowModel, useReactTable, type ColumnDef} from '@tanstack/react-table';
-import {Tag} from 'antd';
+import {ChevronRight} from 'lucide-react';
 import {useLocale} from 'next-intl';
 import type {ValueBet} from '@/types/analytics';
 
@@ -9,7 +9,7 @@ function getColumns(isRu: boolean): ColumnDef<ValueBet>[] {
   return [
     {
       accessorKey: 'match',
-      header: isRu ? 'Матч' : 'Match',
+      header: isRu ? '\u041c\u0430\u0442\u0447' : 'Match',
       cell: ({row}) => (
         <span className="value-table__match">
           {row.original.homeTeam} - {row.original.awayTeam}
@@ -21,30 +21,30 @@ function getColumns(isRu: boolean): ColumnDef<ValueBet>[] {
     },
     {
       accessorKey: 'selection',
-      header: isRu ? 'Выбор' : 'Pick',
+      header: isRu ? '\u041f\u0438\u043a' : 'Pick',
       cell: ({row}) => {
         const selectionMap = {
-          Home: isRu ? 'П1' : 'Home',
-          Draw: isRu ? 'X' : 'Draw',
-          Away: isRu ? 'П2' : 'Away'
+          Home: isRu ? '\u041f1' : 'Home',
+          Draw: 'X',
+          Away: isRu ? '\u041f2' : 'Away'
         };
 
-        return <Tag color="cyan">{selectionMap[row.original.selection]}</Tag>;
+        return <span className="value-table__pick">{selectionMap[row.original.selection]}</span>;
       }
     },
     {
       accessorKey: 'modelProbability',
-      header: isRu ? 'Модель' : 'Model',
+      header: isRu ? '\u041c\u043e\u0434\u0435\u043b\u044c' : 'Model',
       cell: ({row}) => `${(row.original.modelProbability * 100).toFixed(1)}%`
     },
     {
       accessorKey: 'bookmakerOdds',
-      header: isRu ? 'Коэф.' : 'Odds',
+      header: 'Odds',
       cell: ({row}) => row.original.bookmakerOdds.toFixed(2)
     },
     {
       accessorKey: 'fairOdds',
-      header: isRu ? 'Справедл.' : 'Fair',
+      header: 'Fair',
       cell: ({row}) => row.original.fairOdds.toFixed(2)
     },
     {
@@ -54,8 +54,13 @@ function getColumns(isRu: boolean): ColumnDef<ValueBet>[] {
     },
     {
       accessorKey: 'bookmaker',
-      header: isRu ? 'Букмекер' : 'Book',
+      header: isRu ? '\u0411\u0443\u043a' : 'Book',
       cell: ({row}) => row.original.bookmaker
+    },
+    {
+      id: 'open',
+      header: '',
+      cell: () => <ChevronRight className="value-table__chevron" size={16} aria-hidden="true" />
     }
   ];
 }
@@ -74,7 +79,7 @@ export function ValueBetsTable({bets}: ValueBetsTableProps) {
   });
 
   return (
-    <div style={{overflowX: 'auto'}}>
+    <div className="table-scroll">
       <table className="value-table">
         <thead className="value-table__head">
           {table.getHeaderGroups().map((headerGroup) => (
