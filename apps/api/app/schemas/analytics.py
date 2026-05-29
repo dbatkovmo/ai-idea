@@ -82,3 +82,12 @@ class BacktestResultOut(BaseModel):
     sample_size: int
     losing_streak: int
     profit_curve: list[ProfitCurvePointOut]
+
+
+class CollectorRunOut(BaseModel):
+    collector: str
+    status: str
+    inserted: int
+    updated: int
+    skipped: int
+    notes: list[str]

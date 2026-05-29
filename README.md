@@ -94,6 +94,8 @@ cd apps/api
 - `GET /api/v1/matches/{match_id}/odds-movement?bookmaker=fonbet&selection=home`
 - `GET /api/v1/backtests/latest`
 - `POST /api/v1/backtests`
+- `POST /api/v1/admin/collect/fixtures`
+- `POST /api/v1/admin/collect/odds`
 
 Example backtest request:
 
@@ -107,6 +109,15 @@ Example backtest request:
 ```
 
 When PostgreSQL is unavailable, read endpoints fall back to filtered mock data so the dashboard can still run in local UI mode. Docker Compose is the intended full-stack mode for database-backed data.
+
+## Collector Stubs
+
+The first ingestion boundary lives in `apps/api/app/collectors/`.
+
+- `FixturesCollector` writes demo league, team, and fixture rows using stable provider IDs.
+- `OddsCollector` appends synthetic `odds_history` snapshots, refreshes latest odds, and updates materialized value signals.
+
+These collectors are intentionally provider-free. They are safe MVP scaffolding for the future API-Football and bookmaker integrations, and can be triggered manually through the admin endpoints above.
 
 ## Product Principle
 
