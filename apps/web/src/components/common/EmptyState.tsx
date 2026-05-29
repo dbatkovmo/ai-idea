@@ -5,5 +5,5 @@ type EmptyStateProps = {
 };
 
 export function EmptyState({title = 'Нет строк под текущие фильтры'}: EmptyStateProps) {
-  return <Empty className="empty-state" description={title} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+  return <Empty description={title} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
 }

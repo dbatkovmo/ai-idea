@@ -1,21 +1,31 @@
 'use client';
 
-import {Button, Layout, Menu, Segmented, Space, Tooltip} from 'antd';
-import {Activity, BarChart3, Brain, CalendarDays, Gauge, LineChart, Settings, ShieldCheck} from 'lucide-react';
+import {
+  BarChartOutlined,
+  CalendarOutlined,
+  DashboardOutlined,
+  LineChartOutlined,
+  SettingOutlined,
+  ThunderboltOutlined
+} from '@ant-design/icons';
+import {Avatar, Flex, Layout, Menu, Typography, theme} from 'antd';
 import Link from 'next/link';
 import {useLocale} from 'next-intl';
 import {usePathname, useRouter} from 'next/navigation';
 import type {ReactNode} from 'react';
+import {useState} from 'react';
+import {TopbarActions} from './TopbarActions';
 
 const {Sider, Header, Content} = Layout;
+const {Text, Title} = Typography;
 
 const navItems = [
-  {key: '', icon: <Gauge size={17} />, label: {en: 'Dashboard', ru: '\u0414\u0430\u0448\u0431\u043e\u0440\u0434'}},
-  {key: 'matches', icon: <CalendarDays size={17} />, label: {en: 'Matches', ru: '\u041c\u0430\u0442\u0447\u0438'}},
-  {key: 'value-bets', icon: <Activity size={17} />, label: {en: 'Value Bets', ru: 'Value Bets'}},
-  {key: 'model-stats', icon: <Brain size={17} />, label: {en: 'Model Stats', ru: '\u041c\u043e\u0434\u0435\u043b\u044c'}},
-  {key: 'backtesting', icon: <BarChart3 size={17} />, label: {en: 'Backtesting', ru: '\u0411\u044d\u043a\u0442\u0435\u0441\u0442'}},
-  {key: 'settings', icon: <Settings size={17} />, label: {en: 'Settings', ru: '\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438'}}
+  {key: '', icon: <DashboardOutlined />, label: {en: 'Dashboard', ru: 'Дашборд'}},
+  {key: 'matches', icon: <CalendarOutlined />, label: {en: 'Matches', ru: 'Матчи'}},
+  {key: 'value-bets', icon: <ThunderboltOutlined />, label: {en: 'Value Bets', ru: 'Value Bets'}},
+  {key: 'model-stats', icon: <BarChartOutlined />, label: {en: 'Model Stats', ru: 'Модель'}},
+  {key: 'backtesting', icon: <LineChartOutlined />, label: {en: 'Backtesting', ru: 'Бэктест'}},
+  {key: 'settings', icon: <SettingOutlined />, label: {en: 'Settings', ru: 'Настройки'}}
 ];
 
 const shellCopy = {
@@ -27,11 +37,11 @@ const shellCopy = {
     workspaceMeta: 'AI analytics workspace'
   },
   ru: {
-    title: '\u041c\u043e\u043d\u0438\u0442\u043e\u0440\u0438\u043d\u0433 1X2 Value Bets',
-    subtitle: '\u0422\u043e\u043f-5 \u043b\u0438\u0433 · EV, CLV, \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u0435 odds, \u043a\u0430\u043b\u0438\u0431\u0440\u043e\u0432\u043a\u0430',
-    validation: '\u0421\u0442\u0430\u0442\u0443\u0441 \u0432\u0430\u043b\u0438\u0434\u0430\u0446\u0438\u0438 \u043c\u043e\u0434\u0435\u043b\u0438',
+    title: 'Мониторинг 1X2 Value Bets',
+    subtitle: 'Топ-5 лиг · EV, CLV, движение odds, калибровка',
+    validation: 'Статус валидации модели',
     workspace: 'EV Lab',
-    workspaceMeta: '\u0420\u0430\u0431\u043e\u0447\u0430\u044f \u0441\u0440\u0435\u0434\u0430 AI-\u0430\u043d\u0430\u043b\u0438\u0442\u0438\u043a\u0438'
+    workspaceMeta: 'Рабочая среда AI-аналитики'
   }
 };
 
@@ -40,6 +50,8 @@ type AppShellProps = {
 };
 
 export function AppShell({children}: AppShellProps) {
+  const {token} = theme.useToken();
+  const [collapsed, setCollapsed] = useState(false);
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -59,57 +71,118 @@ export function AppShell({children}: AppShellProps) {
     };
   });
 
-  const handleLocaleChange = (nextLocale: string) => {
+  const handleLocaleChange = (nextLocale: 'ru' | 'en') => {
     const segments = pathname.split('/');
     segments[1] = nextLocale;
     router.push(segments.join('/') || `/${nextLocale}`);
   };
 
   return (
-    <Layout className="app-shell">
-      <Sider className="app-shell__sidebar" width={240} breakpoint="lg" collapsedWidth={76}>
-        <div className="app-shell__brand">
-          <span className="app-shell__brand-mark">
-            <LineChart size={18} />
-          </span>
-          <span className="app-shell__brand-name">Football Value AI</span>
-        </div>
-        <Menu mode="inline" theme="dark" selectedKeys={[selectedKey]} items={menuItems} />
-        <div className="app-shell__sidebar-footer">
-          <span className="app-shell__workspace">{shellCopy[activeLocale].workspace}</span>
-          <span className="app-shell__workspace-meta">{shellCopy[activeLocale].workspaceMeta}</span>
-        </div>
+    <Layout style={{minHeight: '100vh', height: '100vh', overflow: 'hidden'}}>
+      <Sider
+        width={240}
+        breakpoint="lg"
+        collapsedWidth={76}
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        theme="dark"
+        style={{borderRight: `1px solid ${token.colorBorderSecondary}`}}
+      >
+        <Flex vertical style={{height: '100%', padding: collapsed ? '20px 12px' : '20px 16px'}}>
+          <Flex
+            align="center"
+            justify={collapsed ? 'center' : 'flex-start'}
+            gap={12}
+            style={{marginBottom: 16, minHeight: 48}}
+          >
+            <Avatar
+              shape="square"
+              size={34}
+              icon={<LineChartOutlined />}
+              style={{
+                background: 'rgba(16, 163, 127, 0.14)',
+                color: token.colorPrimary,
+                border: `1px solid rgba(16, 163, 127, 0.32)`,
+                borderRadius: 10,
+                flexShrink: 0
+              }}
+            />
+            {!collapsed ? (
+              <Text strong style={{color: token.colorText, whiteSpace: 'nowrap'}}>
+                Football Value AI
+              </Text>
+            ) : null}
+          </Flex>
+
+          <Menu
+            mode="inline"
+            theme="dark"
+            selectedKeys={[selectedKey]}
+            items={menuItems}
+            style={{flex: 1, borderInlineEnd: 0, background: 'transparent', padding: '8px 0'}}
+          />
+
+          {!collapsed ? (
+            <Flex
+              vertical
+              gap={4}
+              style={{
+                marginTop: 16,
+                padding: 14,
+                border: `1px solid ${token.colorBorderSecondary}`,
+                borderRadius: 14,
+                background: token.colorBgContainer
+              }}
+            >
+              <Text strong style={{fontSize: 13}}>
+                {shellCopy[activeLocale].workspace}
+              </Text>
+              <Text type="secondary" style={{fontSize: 12}}>
+                {shellCopy[activeLocale].workspaceMeta}
+              </Text>
+            </Flex>
+          ) : null}
+        </Flex>
       </Sider>
 
-      <Layout className="app-shell__main">
-        <Header className="app-shell__topbar">
-          <div className="app-shell__topbar-copy">
-            <h1 className="app-shell__title">{shellCopy[activeLocale].title}</h1>
-            <p className="app-shell__subtitle">{shellCopy[activeLocale].subtitle}</p>
+      <Layout style={{minWidth: 0, overflow: 'hidden'}}>
+        <Header
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: `1px solid ${token.colorBorderSecondary}`,
+            backdropFilter: 'blur(16px)',
+            lineHeight: 'normal',
+            padding: '0 28px'
+          }}
+        >
+          <div style={{minWidth: 0}}>
+            <Title level={4} style={{margin: 0, fontWeight: 700, lineHeight: 1.2}} ellipsis>
+              {shellCopy[activeLocale].title}
+            </Title>
+            <Text type="secondary" style={{fontSize: 13, display: 'block', marginTop: 4}} ellipsis>
+              {shellCopy[activeLocale].subtitle}
+            </Text>
           </div>
-          <Space className="app-shell__topbar-actions" size={10}>
-            <Segmented
-              className="language-switch"
-              aria-label="Language"
-              size="small"
-              value={activeLocale}
-              options={[
-                {label: 'RU', value: 'ru'},
-                {label: 'EN', value: 'en'}
-              ]}
-              onChange={(value) => handleLocaleChange(String(value))}
-            />
-            <Tooltip title={shellCopy[activeLocale].validation}>
-              <Button
-                aria-label={shellCopy[activeLocale].validation}
-                className="topbar-icon-button"
-                icon={<ShieldCheck size={16} />}
-                type="text"
-              />
-            </Tooltip>
-          </Space>
+
+          <TopbarActions
+            activeLocale={activeLocale}
+            validationLabel={shellCopy[activeLocale].validation}
+            onLocaleChange={handleLocaleChange}
+          />
         </Header>
-        <Content className="app-shell__content">{children}</Content>
+
+        <Content
+          style={{
+            height: 'calc(100vh - 70px)',
+            padding: '28px 32px 34px',
+            overflow: 'auto'
+          }}
+        >
+          {children}
+        </Content>
       </Layout>
     </Layout>
   );

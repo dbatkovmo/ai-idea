@@ -9,7 +9,7 @@ type OddsMovementChartProps = {
 
 export function OddsMovementChart({data}: OddsMovementChartProps) {
   return (
-    <div className="chart-frame">
+    <div style={{width: '100%', height: 320}}>
       <ResponsiveContainer>
         <LineChart data={data} margin={{top: 8, right: 12, bottom: 8, left: 0}}>
           <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />

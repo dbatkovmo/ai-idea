@@ -1,7 +1,7 @@
 'use client';
 
-import {Table, Tag, Typography, type TableColumnsType} from 'antd';
-import {ChevronRight} from 'lucide-react';
+import {RightOutlined} from '@ant-design/icons';
+import {Flex, Table, Tag, Typography, type TableColumnsType} from 'antd';
 import {useLocale} from 'next-intl';
 import type {ValueBet} from '@/types/analytics';
 
@@ -10,33 +10,35 @@ const {Text} = Typography;
 function getColumns(isRu: boolean): TableColumnsType<ValueBet> {
   return [
     {
-      title: isRu ? '\u041c\u0430\u0442\u0447' : 'Match',
+      title: isRu ? 'Матч' : 'Match',
       key: 'match',
       render: (_, row) => (
-        <Typography.Text strong className="table-match">
-          {row.homeTeam} - {row.awayTeam}
-          <Text type="secondary" className="table-muted">
+        <Flex vertical gap={4}>
+          <Text strong>
+            {row.homeTeam} - {row.awayTeam}
+          </Text>
+          <Text type="secondary" style={{fontSize: 12}}>
             {row.league} · {row.kickoff}
           </Text>
-        </Typography.Text>
+        </Flex>
       )
     },
     {
-      title: isRu ? '\u041f\u0438\u043a' : 'Pick',
+      title: isRu ? 'Пик' : 'Pick',
       dataIndex: 'selection',
       key: 'selection',
       render: (selection: ValueBet['selection']) => {
         const selectionMap = {
-          Home: isRu ? '\u041f1' : 'Home',
+          Home: isRu ? 'П1' : 'Home',
           Draw: 'X',
-          Away: isRu ? '\u041f2' : 'Away'
+          Away: isRu ? 'П2' : 'Away'
         };
 
-        return <Tag className="tag-pick">{selectionMap[selection]}</Tag>;
+        return <Tag style={{minWidth: 34, textAlign: 'center'}}>{selectionMap[selection]}</Tag>;
       }
     },
     {
-      title: isRu ? '\u041c\u043e\u0434\u0435\u043b\u044c' : 'Model',
+      title: isRu ? 'Модель' : 'Model',
       dataIndex: 'modelProbability',
       key: 'modelProbability',
       render: (value: number) => `${(value * 100).toFixed(1)}%`
@@ -57,10 +59,10 @@ function getColumns(isRu: boolean): TableColumnsType<ValueBet> {
       title: 'EV',
       dataIndex: 'ev',
       key: 'ev',
-      render: (value: number) => <Tag className="tag-ev">{(value * 100).toFixed(1)}%</Tag>
+      render: (value: number) => <Tag color="success">{(value * 100).toFixed(1)}%</Tag>
     },
     {
-      title: isRu ? '\u0411\u0443\u043a' : 'Book',
+      title: isRu ? 'Бук' : 'Book',
       dataIndex: 'bookmaker',
       key: 'bookmaker'
     },
@@ -68,7 +70,7 @@ function getColumns(isRu: boolean): TableColumnsType<ValueBet> {
       title: '',
       key: 'open',
       width: 42,
-      render: () => <ChevronRight className="table-chevron" size={16} aria-hidden="true" />
+      render: () => <RightOutlined style={{color: '#71717A'}} />
     }
   ];
 }
@@ -83,12 +85,12 @@ export function ValueBetsTable({bets, scrollY}: ValueBetsTableProps) {
 
   return (
     <Table<ValueBet>
-      className="premium-table"
       columns={getColumns(locale !== 'en')}
       dataSource={bets}
       pagination={false}
       rowKey="id"
       scroll={{x: true, y: scrollY}}
+      size="middle"
     />
   );
 }

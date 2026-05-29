@@ -1,20 +1,23 @@
 'use client';
 
-import {Card, Flex, Segmented, Table, Tag, Typography, type TableColumnsType} from 'antd';
+import {Card, Segmented, Table, Tag, Typography, type TableColumnsType} from 'antd';
 import {useLocale} from 'next-intl';
 import {useCallback, useMemo, useState} from 'react';
 import {DataStatus} from '@/components/common/DataStatus';
 import {EmptyState} from '@/components/common/EmptyState';
-import {fallbackData, getMatches} from '@/lib/api';
+import {FilterCard} from '@/components/layout/FilterCard';
+import {PageContainer} from '@/components/layout/PageContainer';
+import {PageHeader} from '@/components/layout/PageHeader';
 import {useApiResource} from '@/hooks/use-api-resource';
+import {fallbackData, getMatches} from '@/lib/api';
 import type {Match, MatchStatusFilter} from '@/types/analytics';
 
 const statusLabels = {
-  scheduled: '\u041f\u0440\u0435\u0434\u0441\u0442\u043e\u044f\u0449\u0438\u0439',
+  scheduled: 'предстоящий',
   live: 'Live',
-  finished: '\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d',
-  postponed: '\u041f\u0435\u0440\u0435\u043d\u0435\u0441\u0435\u043d',
-  cancelled: '\u041e\u0442\u043c\u0435\u043d\u0435\u043d'
+  finished: 'Завершен',
+  postponed: 'Перенесен',
+  cancelled: 'Отменен'
 } as const;
 
 function statusColor(status: string) {
@@ -27,14 +30,18 @@ function statusColor(status: string) {
 function getColumns(isRu: boolean): TableColumnsType<Match> {
   return [
     {
-      title: isRu ? '\u041c\u0430\u0442\u0447' : 'Match',
+      title: isRu ? 'Матч' : 'Match',
       key: 'match',
-      render: (_, row) => <Typography.Text strong>{row.homeTeam} - {row.awayTeam}</Typography.Text>
+      render: (_, row) => (
+        <Typography.Text strong>
+          {row.homeTeam} - {row.awayTeam}
+        </Typography.Text>
+      )
     },
-    {title: isRu ? '\u041b\u0438\u0433\u0430' : 'League', dataIndex: 'league', key: 'league'},
-    {title: isRu ? '\u041d\u0430\u0447\u0430\u043b\u043e' : 'Kickoff', dataIndex: 'kickoff', key: 'kickoff'},
+    {title: isRu ? 'Лига' : 'League', dataIndex: 'league', key: 'league'},
+    {title: isRu ? 'Начало' : 'Kickoff', dataIndex: 'kickoff', key: 'kickoff'},
     {
-      title: isRu ? '\u041f1' : 'Home',
+      title: isRu ? 'П1' : 'Home',
       dataIndex: 'homeProbability',
       key: 'homeProbability',
       render: (value: number) => `${(value * 100).toFixed(1)}%`
@@ -46,13 +53,13 @@ function getColumns(isRu: boolean): TableColumnsType<Match> {
       render: (value: number) => `${(value * 100).toFixed(1)}%`
     },
     {
-      title: isRu ? '\u041f2' : 'Away',
+      title: isRu ? 'П2' : 'Away',
       dataIndex: 'awayProbability',
       key: 'awayProbability',
       render: (value: number) => `${(value * 100).toFixed(1)}%`
     },
     {
-      title: isRu ? '\u0421\u0442\u0430\u0442\u0443\u0441' : 'Status',
+      title: isRu ? 'Статус' : 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
@@ -73,60 +80,55 @@ export function MatchesView() {
   const rows = useMemo(() => matchesState.data, [matchesState.data]);
 
   return (
-    <main className="dashboard dashboard--table-page">
-      <Flex className="page-header" align="center" justify="space-between" gap={18}>
-        <div>
-          <Typography.Text className="page-header__eyebrow">
-            {isRu ? '\u041a\u0430\u043b\u0435\u043d\u0434\u0430\u0440\u044c \u043c\u0430\u0442\u0447\u0435\u0439' : 'Fixture board'}
-          </Typography.Text>
-          <Typography.Title level={2} className="page-header__title">
-            {isRu ? '\u041c\u0430\u0442\u0447\u0438' : 'Matches'}
-          </Typography.Title>
-        </div>
-        <DataStatus {...matchesState} />
-      </Flex>
+    <PageContainer fill>
+      <PageHeader
+        eyebrow={isRu ? 'Календарь матчей' : 'Fixture board'}
+        title={isRu ? 'Матчи' : 'Matches'}
+        extra={<DataStatus {...matchesState} />}
+      />
 
-      <Card className="filter-card" variant="borderless">
+      <FilterCard>
         <Segmented
           value={status}
           onChange={(value) => setStatus(value as MatchStatusFilter)}
           options={[
-            {label: isRu ? '\u041f\u0440\u0435\u0434\u0441\u0442\u043e\u044f\u0449\u0438\u0435' : 'Upcoming', value: 'scheduled'},
-            {label: isRu ? '\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0435' : 'Finished', value: 'finished'},
-            {label: isRu ? '\u0412\u0441\u0435' : 'All', value: 'all'}
+            {label: isRu ? 'Предстоящие' : 'Upcoming', value: 'scheduled'},
+            {label: isRu ? 'Завершенные' : 'Finished', value: 'finished'},
+            {label: isRu ? 'Все' : 'All', value: 'all'}
           ]}
         />
-      </Card>
+      </FilterCard>
 
       <Card
-        className="analytics-card table-card"
-        title={isRu ? '\u041c\u0430\u0442\u0440\u0438\u0446\u0430 \u0432\u0435\u0440\u043e\u044f\u0442\u043d\u043e\u0441\u0442\u0435\u0439 1X2' : 'Pre-Match Probability Matrix'}
-        extra={<Tag className="tag-soft">{isRu ? `${rows.length} \u043c\u0430\u0442\u0447\u0435\u0439` : `${rows.length} matches`}</Tag>}
-        variant="borderless"
+        bordered={false}
+        title={isRu ? 'Матрица вероятностей 1X2' : 'Pre-Match Probability Matrix'}
+        extra={<Tag>{isRu ? `${rows.length} матчей` : `${rows.length} matches`}</Tag>}
+        styles={{body: {padding: 20, flex: 1, minHeight: 0}}}
+        style={{flex: 1, display: 'flex', flexDirection: 'column'}}
       >
         {rows.length === 0 ? (
           <EmptyState
             title={
               status === 'scheduled'
                 ? isRu
-                  ? '\u041f\u0440\u0435\u0434\u0441\u0442\u043e\u044f\u0449\u0438\u0445 \u043c\u0430\u0442\u0447\u0435\u0439 \u0441\u0435\u0439\u0447\u0430\u0441 \u043d\u0435\u0442. \u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0438 \u0444\u0438\u043b\u044c\u0442\u0440 \u043d\u0430 "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0435", \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0438\u0441\u0442\u043e\u0440\u0438\u044e.'
+                  ? 'Предстоящих матчей сейчас нет. Переключи фильтр на "Завершенные", чтобы посмотреть историю.'
                   : 'No upcoming matches. Switch to Finished to inspect historical fixtures.'
                 : isRu
-                  ? '\u041d\u0435\u0442 \u043c\u0430\u0442\u0447\u0435\u0439 \u043f\u043e\u0434 \u0442\u0435\u043a\u0443\u0449\u0438\u0439 \u0444\u0438\u043b\u044c\u0442\u0440.'
+                  ? 'Нет матчей под текущий фильтр.'
                   : 'No matches for the current filter.'
             }
           />
         ) : (
           <Table<Match>
-            className="premium-table"
             columns={getColumns(isRu)}
             dataSource={rows}
             pagination={false}
             rowKey="id"
             scroll={{x: true, y: 'calc(100vh - 360px)'}}
+            size="middle"
           />
         )}
       </Card>
-    </main>
+    </PageContainer>
   );
 }
