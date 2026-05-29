@@ -15,7 +15,12 @@ class Settings(BaseSettings):
     redis_host: str = "localhost"
     redis_port: int = 6379
     redis_db: int = 0
+    data_provider_mode: str = "demo"
     api_football_key: str = ""
+    football_data_key: str = ""
+    football_data_base_url: str = "https://api.football-data.org/v4"
+    football_data_competition_code: str = "PL"
+    football_data_days_ahead: int = 120
     fonbet_base_url: str = ""
     winline_base_url: str = ""
 

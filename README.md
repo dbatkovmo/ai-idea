@@ -114,10 +114,22 @@ When PostgreSQL is unavailable, read endpoints fall back to filtered mock data s
 
 The first ingestion boundary lives in `apps/api/app/collectors/`.
 
-- `FixturesCollector` writes demo league, team, and fixture rows using stable provider IDs.
+- `FixturesCollector` writes league, team, and fixture rows using stable provider IDs.
 - `OddsCollector` appends synthetic `odds_history` snapshots, refreshes latest odds, and updates materialized value signals.
 
-These collectors are intentionally provider-free. They are safe MVP scaffolding for the future API-Football and bookmaker integrations, and can be triggered manually through the admin endpoints above.
+Fixtures can run in two modes:
+
+- `DATA_PROVIDER_MODE=demo` uses local demo fixtures.
+- `DATA_PROVIDER_MODE=real` uses football-data.org through `FOOTBALL_DATA_KEY`.
+
+The football-data.org adapter lives in `apps/api/app/providers/football_data.py`. Keep real API tokens in local `.env` only; `.env.example` documents the required variable names without secrets. Odds remain synthetic until a bookmaker odds provider is added.
+
+Manual collection:
+
+```powershell
+Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/admin/collect/fixtures
+Invoke-RestMethod -Method Post http://127.0.0.1:8000/api/v1/admin/collect/odds
+```
 
 ## Product Principle
 
