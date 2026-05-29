@@ -27,6 +27,8 @@ export type Match = {
   awayProbability: number;
 };
 
+export type MatchStatusFilter = 'scheduled' | 'finished' | 'all';
+
 export type OddsPoint = {
   time: string;
   opening: number;

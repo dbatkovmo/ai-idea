@@ -2,6 +2,7 @@
 
 import {Button, Segmented} from 'antd';
 import {Play} from 'lucide-react';
+import {useLocale} from 'next-intl';
 import {useCallback, useState} from 'react';
 import {DataStatus} from '@/components/common/DataStatus';
 import {StatCard} from '@/components/dashboard/StatCard';
@@ -10,6 +11,8 @@ import {useApiResource} from '@/hooks/use-api-resource';
 import {ProfitCurveChart} from './ProfitCurveChart';
 
 export function BacktestingView() {
+  const locale = useLocale();
+  const isRu = locale !== 'en';
   const [window, setWindow] = useState('90D');
   const [league, setLeague] = useState('all');
   const [isRunning, setIsRunning] = useState(false);
@@ -31,11 +34,11 @@ export function BacktestingView() {
     <main className="dashboard">
       <section className="page-header">
         <div>
-          <p className="page-header__eyebrow">Validation lab</p>
-          <h2 className="page-header__title">Backtesting</h2>
+          <p className="page-header__eyebrow">{isRu ? 'Лаборатория валидации' : 'Validation lab'}</p>
+          <h2 className="page-header__title">{isRu ? 'Бэктестинг' : 'Backtesting'}</h2>
         </div>
         <Button icon={<Play size={16} />} loading={isRunning} onClick={handleRun}>
-          Run Walk-Forward
+          {isRu ? 'Запустить walk-forward' : 'Run Walk-Forward'}
         </Button>
       </section>
 
@@ -44,7 +47,7 @@ export function BacktestingView() {
           <Segmented options={['30D', '90D', 'Season', 'Custom']} value={window} onChange={(value) => setWindow(String(value))} />
           <Segmented
             options={[
-              {label: 'All', value: 'all'},
+              {label: isRu ? 'Все' : 'All', value: 'all'},
               {label: 'Premier League', value: 'premier-league'},
               {label: 'La Liga', value: 'la-liga'},
               {label: 'Serie A', value: 'serie-a'}
@@ -57,36 +60,36 @@ export function BacktestingView() {
       </section>
 
       <section className="dashboard__stats">
-        <StatCard label="ROI" value={`${(result.roi * 100).toFixed(1)}%`} delta={`${result.sampleSize} samples`} />
-        <StatCard label="CLV" value={`+${(result.clv * 100).toFixed(1)}%`} delta="Closing price advantage" />
-        <StatCard label="Drawdown" value={`${(result.maxDrawdown * 100).toFixed(1)}%`} delta="Max historical trough" />
-        <StatCard label="Losing Streak" value={result.losingStreak.toString()} delta="Longest sequence" />
+        <StatCard label="ROI" value={`${(result.roi * 100).toFixed(1)}%`} delta={isRu ? `${result.sampleSize} ставок` : `${result.sampleSize} samples`} />
+        <StatCard label="CLV" value={`+${(result.clv * 100).toFixed(1)}%`} delta={isRu ? 'Преимущество к закрытию линии' : 'Closing price advantage'} />
+        <StatCard label={isRu ? 'Просадка' : 'Drawdown'} value={`${(result.maxDrawdown * 100).toFixed(1)}%`} delta={isRu ? 'Максимальная историческая' : 'Max historical trough'} />
+        <StatCard label={isRu ? 'Серия минусов' : 'Losing Streak'} value={result.losingStreak.toString()} delta={isRu ? 'Самая длинная серия' : 'Longest sequence'} />
       </section>
 
       <section className="dashboard__grid">
         <div className="panel">
           <div className="panel__header">
-            <h3 className="panel__title">Profit Curve</h3>
+            <h3 className="panel__title">{isRu ? 'Кривая прибыли' : 'Profit Curve'}</h3>
             <span className="data-pill">{`${result.window} · ${result.league}`}</span>
           </div>
           <ProfitCurveChart data={result.profitCurve} />
         </div>
         <div className="panel">
           <div className="panel__header">
-            <h3 className="panel__title">Validation Rules</h3>
+            <h3 className="panel__title">{isRu ? 'Правила валидации' : 'Validation Rules'}</h3>
           </div>
           <div className="metric-list">
             <div className="metric-list__row">
-              <span>Time-series split</span>
-              <strong>Required</strong>
+              <span>{isRu ? 'Разделение по времени' : 'Time-series split'}</span>
+              <strong>{isRu ? 'Обязательно' : 'Required'}</strong>
             </div>
             <div className="metric-list__row">
-              <span>No future data</span>
-              <strong>Required</strong>
+              <span>{isRu ? 'Без будущих данных' : 'No future data'}</span>
+              <strong>{isRu ? 'Обязательно' : 'Required'}</strong>
             </div>
             <div className="metric-list__row">
-              <span>Historical odds snapshots</span>
-              <strong>Required</strong>
+              <span>{isRu ? 'История коэффициентов' : 'Historical odds snapshots'}</span>
+              <strong>{isRu ? 'Обязательно' : 'Required'}</strong>
             </div>
           </div>
         </div>

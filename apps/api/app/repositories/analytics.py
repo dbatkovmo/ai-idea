@@ -11,6 +11,7 @@ from app.models.domain import (
     Bookmaker,
     League,
     Match,
+    MatchStatus,
     ModelMetrics,
     Odds,
     OddsHistory,
@@ -31,6 +32,7 @@ class AnalyticsRepository:
         league: Optional[str] = None,
         date_from: Optional[date] = None,
         date_to: Optional[date] = None,
+        status: Optional[MatchStatus] = None,
     ) -> list[MatchOut]:
         home_team = aliased(Team)
         away_team = aliased(Team)
@@ -59,6 +61,8 @@ class AnalyticsRepository:
         )
         if league:
             stmt = stmt.where(League.slug == league)
+        if status:
+            stmt = stmt.where(Match.status == status)
         if date_from:
             stmt = stmt.where(Match.kickoff_at >= datetime.combine(date_from, time.min, tzinfo=timezone.utc))
         if date_to:

@@ -31,10 +31,10 @@ export function ValueBetsView() {
         <DataStatus {...valueBetsState} />
       </section>
 
-      <section className="dashboard__toolbar" aria-label="Value bet filters">
+      <section className="dashboard__toolbar" aria-label={isRu ? 'Фильтры value bets' : 'Value bet filters'}>
         <div className="dashboard__filters">
           <Select
-            aria-label="League"
+            aria-label={isRu ? 'Лига' : 'League'}
             value={league}
             style={{width: 180}}
             onChange={setLeague}
@@ -47,9 +47,9 @@ export function ValueBetsView() {
               {value: 'ligue-1', label: 'Ligue 1'}
             ]}
           />
-          <DatePicker.RangePicker aria-label="Date range" />
+          <DatePicker.RangePicker aria-label={isRu ? 'Диапазон дат' : 'Date range'} />
           <InputNumber
-            aria-label="Minimum EV"
+            aria-label={isRu ? 'Минимальный EV' : 'Minimum EV'}
             min={0}
             max={0.3}
             step={0.01}
@@ -63,7 +63,7 @@ export function ValueBetsView() {
 
       <section className="panel">
         <div className="panel__header">
-          <h3 className="panel__title">{isRu ? 'Отобранные 1X2 сигналы' : 'Qualified 1X2 Signals'}</h3>
+          <h3 className="panel__title">{isRu ? 'Отобранные 1X2-сигналы' : 'Qualified 1X2 Signals'}</h3>
           <span className="data-pill">{isRu ? `${filteredBets.length} активных` : `${filteredBets.length} active`}</span>
         </div>
         {filteredBets.length === 0 ? <EmptyState /> : <ValueBetsTable bets={filteredBets} />}

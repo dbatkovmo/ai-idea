@@ -1,5 +1,5 @@
 import {mockBacktestResult, mockMatches, mockModelStats, mockValueBets} from '@/lib/mock-data';
-import type {BacktestResult, Match, ModelStats, OddsPoint, ValueBet} from '@/types/analytics';
+import type {BacktestResult, Match, MatchStatusFilter, ModelStats, OddsPoint, ValueBet} from '@/types/analytics';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
 
@@ -122,8 +122,12 @@ function createQuery(params: Record<string, string | number | undefined>) {
   return queryString ? `?${queryString}` : '';
 }
 
-export async function getMatches(locale = 'ru'): Promise<Match[]> {
-  const rows = await fetchJson<ApiMatch[]>('/matches');
+export async function getMatches(locale = 'ru', status: MatchStatusFilter = 'scheduled'): Promise<Match[]> {
+  const rows = await fetchJson<ApiMatch[]>(
+    `/matches${createQuery({
+      status: status === 'all' ? undefined : status
+    })}`
+  );
   return rows.map((row) => ({
     id: row.id,
     league: row.league,

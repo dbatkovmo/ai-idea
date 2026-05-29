@@ -7,54 +7,56 @@ import type {ValueBet} from '@/types/analytics';
 
 function getColumns(isRu: boolean): ColumnDef<ValueBet>[] {
   return [
-  {
-    accessorKey: 'match',
-    header: isRu ? 'Матч' : 'Match',
-    cell: ({row}) => (
-      <span className="value-table__match">
-        {row.original.homeTeam} vs {row.original.awayTeam}
-        <span className="value-table__muted">{row.original.league} · {row.original.kickoff}</span>
-      </span>
-    )
-  },
-  {
-    accessorKey: 'selection',
-    header: isRu ? 'Пик' : 'Pick',
-    cell: ({row}) => {
-      const selectionMap = {
-        Home: isRu ? 'П1' : 'Home',
-        Draw: isRu ? 'X' : 'Draw',
-        Away: isRu ? 'П2' : 'Away'
-      };
+    {
+      accessorKey: 'match',
+      header: isRu ? 'Матч' : 'Match',
+      cell: ({row}) => (
+        <span className="value-table__match">
+          {row.original.homeTeam} - {row.original.awayTeam}
+          <span className="value-table__muted">
+            {row.original.league} · {row.original.kickoff}
+          </span>
+        </span>
+      )
+    },
+    {
+      accessorKey: 'selection',
+      header: isRu ? 'Выбор' : 'Pick',
+      cell: ({row}) => {
+        const selectionMap = {
+          Home: isRu ? 'П1' : 'Home',
+          Draw: isRu ? 'X' : 'Draw',
+          Away: isRu ? 'П2' : 'Away'
+        };
 
-      return <Tag color="cyan">{selectionMap[row.original.selection]}</Tag>;
+        return <Tag color="cyan">{selectionMap[row.original.selection]}</Tag>;
+      }
+    },
+    {
+      accessorKey: 'modelProbability',
+      header: isRu ? 'Модель' : 'Model',
+      cell: ({row}) => `${(row.original.modelProbability * 100).toFixed(1)}%`
+    },
+    {
+      accessorKey: 'bookmakerOdds',
+      header: isRu ? 'Коэф.' : 'Odds',
+      cell: ({row}) => row.original.bookmakerOdds.toFixed(2)
+    },
+    {
+      accessorKey: 'fairOdds',
+      header: isRu ? 'Справедл.' : 'Fair',
+      cell: ({row}) => row.original.fairOdds.toFixed(2)
+    },
+    {
+      accessorKey: 'ev',
+      header: 'EV',
+      cell: ({row}) => <span className="value-table__positive">{(row.original.ev * 100).toFixed(1)}%</span>
+    },
+    {
+      accessorKey: 'bookmaker',
+      header: isRu ? 'Букмекер' : 'Book',
+      cell: ({row}) => row.original.bookmaker
     }
-  },
-  {
-    accessorKey: 'modelProbability',
-    header: isRu ? 'Модель' : 'Model',
-    cell: ({row}) => `${(row.original.modelProbability * 100).toFixed(1)}%`
-  },
-  {
-    accessorKey: 'bookmakerOdds',
-    header: 'Odds',
-    cell: ({row}) => row.original.bookmakerOdds.toFixed(2)
-  },
-  {
-    accessorKey: 'fairOdds',
-    header: isRu ? 'Fair' : 'Fair',
-    cell: ({row}) => row.original.fairOdds.toFixed(2)
-  },
-  {
-    accessorKey: 'ev',
-    header: 'EV',
-    cell: ({row}) => <span className="value-table__positive">{(row.original.ev * 100).toFixed(1)}%</span>
-  },
-  {
-    accessorKey: 'bookmaker',
-    header: isRu ? 'Бук' : 'Book',
-    cell: ({row}) => row.original.bookmaker
-  }
   ];
 }
 

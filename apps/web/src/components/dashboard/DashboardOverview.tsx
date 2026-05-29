@@ -15,6 +15,7 @@ import {ValueBetsTable} from './ValueBetsTable';
 
 export function DashboardOverview() {
   const locale = useLocale();
+  const isRu = locale !== 'en';
   const {league, minEv, setLeague, setMinEv} = useDashboardStore();
   const loadValueBets = useCallback(() => getValueBets(minEv, locale, league), [league, locale, minEv]);
   const loadModelStats = useCallback(() => getModelStats(), []);
@@ -38,8 +39,8 @@ export function DashboardOverview() {
     <main className="dashboard">
       <section className="page-header">
         <div>
-          <p className="page-header__eyebrow">MVP analytics</p>
-          <h2 className="page-header__title">Dashboard</h2>
+          <p className="page-header__eyebrow">{isRu ? 'MVP-аналитика' : 'MVP analytics'}</p>
+          <h2 className="page-header__title">{isRu ? 'Дашборд' : 'Dashboard'}</h2>
         </div>
         <DataStatus
           isLoading={valueBetsState.isLoading || modelStatsState.isLoading}
@@ -48,15 +49,15 @@ export function DashboardOverview() {
         />
       </section>
 
-      <section className="dashboard__toolbar" aria-label="Dashboard controls">
+      <section className="dashboard__toolbar" aria-label={isRu ? 'Управление дашбордом' : 'Dashboard controls'}>
         <div className="dashboard__filters">
           <Select
-            aria-label="League"
+            aria-label={isRu ? 'Лига' : 'League'}
             value={league}
             style={{width: 180}}
             onChange={setLeague}
             options={[
-              {value: 'all', label: 'All leagues'},
+              {value: 'all', label: isRu ? 'Все лиги' : 'All leagues'},
               {value: 'premier-league', label: 'Premier League'},
               {value: 'la-liga', label: 'La Liga'},
               {value: 'serie-a', label: 'Serie A'},
@@ -64,9 +65,9 @@ export function DashboardOverview() {
               {value: 'ligue-1', label: 'Ligue 1'}
             ]}
           />
-          <DatePicker.RangePicker aria-label="Date range" />
+          <DatePicker.RangePicker aria-label={isRu ? 'Диапазон дат' : 'Date range'} />
           <InputNumber
-            aria-label="Minimum EV"
+            aria-label={isRu ? 'Минимальный EV' : 'Minimum EV'}
             min={0}
             max={0.3}
             step={0.01}
@@ -76,18 +77,26 @@ export function DashboardOverview() {
           />
           <Segmented options={['1X2']} value="1X2" />
         </div>
-        <Button icon={<RefreshCcw size={16} />}>Sync Odds</Button>
+        <Button icon={<RefreshCcw size={16} />}>{isRu ? 'Обновить коэффициенты' : 'Sync Odds'}</Button>
       </section>
 
-      <section className="dashboard__stats" aria-label="Model performance snapshot">
-        <StatCard label="Active Value Bets" value={filteredBets.length.toString()} delta="+4 vs previous slate" />
+      <section className="dashboard__stats" aria-label={isRu ? 'Сводка модели' : 'Model performance snapshot'}>
         <StatCard
-          label="Avg EV"
-          value={`${((filteredBets.reduce((sum, bet) => sum + bet.ev, 0) / Math.max(filteredBets.length, 1)) * 100).toFixed(1)}%`}
-          delta="+1.1 pp after filters"
+          label={isRu ? 'Активные Value Bets' : 'Active Value Bets'}
+          value={filteredBets.length.toString()}
+          delta={isRu ? 'С учетом текущих фильтров' : 'After current filters'}
         />
-        <StatCard label="CLV Signal" value={`${(stats.clv * 100).toFixed(1)}%`} delta="Positive movement target" />
-        <StatCard label="Calibration" value={stats.brierScore.toFixed(3)} delta="Brier score trailing 30d" />
+        <StatCard
+          label={isRu ? 'Средний EV' : 'Avg EV'}
+          value={`${((filteredBets.reduce((sum, bet) => sum + bet.ev, 0) / Math.max(filteredBets.length, 1)) * 100).toFixed(1)}%`}
+          delta={isRu ? 'Среднее по выборке' : 'Average after filters'}
+        />
+        <StatCard label="CLV" value={`${(stats.clv * 100).toFixed(1)}%`} delta={isRu ? 'Цель движения линии' : 'Positive movement target'} />
+        <StatCard
+          label={isRu ? 'Калибровка' : 'Calibration'}
+          value={stats.brierScore.toFixed(3)}
+          delta={isRu ? 'Brier score за период' : 'Brier score trailing 30d'}
+        />
       </section>
 
       <section className="dashboard__grid">
@@ -100,7 +109,7 @@ export function DashboardOverview() {
 
         <div className="panel">
           <div className="panel__header">
-            <h2 className="panel__title">Odds Movement</h2>
+            <h2 className="panel__title">{isRu ? 'Движение коэффициентов' : 'Odds Movement'}</h2>
             <DataStatus {...oddsMovementState} />
           </div>
           <OddsMovementChart data={oddsMovementState.data} />

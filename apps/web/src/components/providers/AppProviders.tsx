@@ -1,6 +1,7 @@
 'use client';
 
 import {ConfigProvider, theme} from 'antd';
+import ruRU from 'antd/locale/ru_RU';
 import type {ReactNode} from 'react';
 
 type AppProvidersProps = {
@@ -10,6 +11,7 @@ type AppProvidersProps = {
 export function AppProviders({children}: AppProvidersProps) {
   return (
     <ConfigProvider
+      locale={ruRU}
       theme={{
         algorithm: theme.darkAlgorithm,
         token: {

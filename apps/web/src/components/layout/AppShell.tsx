@@ -26,7 +26,7 @@ const shellCopy = {
   },
   ru: {
     title: 'Мониторинг 1X2 Value Bets',
-    subtitle: 'Топ-5 лиг · EV, CLV, движение odds, калибровка',
+    subtitle: 'Топ-5 лиг · EV, CLV, движение коэффициентов, калибровка',
     validation: 'Статус валидации модели'
   }
 };
@@ -41,9 +41,10 @@ export function AppShell({children}: AppShellProps) {
   const pathname = usePathname();
   const activeLocale = locale === 'en' ? 'en' : 'ru';
   const basePath = `/${locale}`;
-  const selectedKey = navItems
-    .map((item) => `${basePath}${item.key ? `/${item.key}` : ''}`)
-    .find((href) => pathname === href || (href !== basePath && pathname.startsWith(href))) ?? basePath;
+  const selectedKey =
+    navItems
+      .map((item) => `${basePath}${item.key ? `/${item.key}` : ''}`)
+      .find((href) => pathname === href || (href !== basePath && pathname.startsWith(href))) ?? basePath;
 
   const menuItems = navItems.map((item) => {
     const href = `${basePath}${item.key ? `/${item.key}` : ''}`;

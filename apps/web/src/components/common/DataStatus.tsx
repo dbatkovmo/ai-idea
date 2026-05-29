@@ -34,7 +34,7 @@ export function DataStatus({isLoading, error, source}: DataStatusProps) {
 
   return (
     <span className="data-pill">
-      {source === 'api' ? (isRu ? 'Live API' : 'Live API') : isRu ? 'Mock-данные' : 'Mock data'}
+      {source === 'api' ? (isRu ? 'Живой API' : 'Live API') : isRu ? 'Демо-данные' : 'Mock data'}
     </span>
   );
 }

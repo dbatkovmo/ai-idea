@@ -4,9 +4,9 @@ import {Switch} from 'antd';
 import {useLocale} from 'next-intl';
 
 const settings = [
-  [{en: 'API-Football collector', ru: 'Сборщик API-Football'}, false],
-  [{en: 'Fonbet odds collector', ru: 'Сборщик odds Fonbet'}, false],
-  [{en: 'Winline odds collector', ru: 'Сборщик odds Winline'}, false],
+  [{en: 'football-data.org collector', ru: 'Сборщик football-data.org'}, true],
+  [{en: 'Fonbet odds collector', ru: 'Сборщик коэффициентов Fonbet'}, false],
+  [{en: 'Winline odds collector', ru: 'Сборщик коэффициентов Winline'}, false],
   [{en: '15 minute scheduler', ru: 'Обновление каждые 15 минут'}, false],
   [{en: 'CLV tracking', ru: 'Отслеживание CLV'}, true],
   [{en: 'Leakage guardrails', ru: 'Защита от leakage'}, true]
@@ -22,7 +22,7 @@ const copy = {
   ru: {
     eyebrow: 'Окружение',
     title: 'Настройки',
-    badge: 'MVP конфиг',
+    badge: 'MVP-конфиг',
     modules: 'Модули платформы'
   }
 };

@@ -6,7 +6,7 @@ from typing import Optional
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.models.domain import Bookmaker, Selection
+from app.models.domain import Bookmaker, MatchStatus, Selection
 from app.repositories.analytics import AnalyticsRepository
 from app.schemas.analytics import BacktestRunIn, BacktestResultOut, MatchOut, ModelStatsOut, OddsMovementPointOut, ValueBetOut
 from app.services import mock_repository
@@ -21,12 +21,13 @@ class AnalyticsService:
         league: Optional[str] = None,
         date_from: Optional[date] = None,
         date_to: Optional[date] = None,
+        status: Optional[MatchStatus] = None,
     ) -> list[MatchOut]:
         try:
-            matches = self.repository.list_matches(league=league, date_from=date_from, date_to=date_to)
+            matches = self.repository.list_matches(league=league, date_from=date_from, date_to=date_to, status=status)
         except SQLAlchemyError:
             return mock_repository.list_matches(league=league, date_from=date_from, date_to=date_to)
-        return matches or mock_repository.list_matches(league=league, date_from=date_from, date_to=date_to)
+        return matches
 
     def list_value_bets(
         self,
