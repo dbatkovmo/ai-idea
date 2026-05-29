@@ -1,19 +1,37 @@
 from __future__ import annotations
 
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Optional
+from uuid import UUID as PythonUUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, aliased
 
-from app.models.domain import Bookmaker, League, Match, ModelMetrics, Odds, Prediction, Selection, Team, ValueBet
-from app.schemas.analytics import MatchOut, ModelStatsOut, SelectionOut, ValueBetOut
+from app.models.domain import (
+    Bookmaker,
+    League,
+    Match,
+    ModelMetrics,
+    Odds,
+    OddsHistory,
+    Prediction,
+    Selection,
+    Team,
+    ValueBet,
+)
+from app.schemas.analytics import MatchOut, ModelStatsOut, OddsMovementPointOut, SelectionOut, ValueBetOut
 
 
 class AnalyticsRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def list_matches(self, league: Optional[str] = None) -> list[MatchOut]:
+    def list_matches(
+        self,
+        league: Optional[str] = None,
+        date_from: Optional[date] = None,
+        date_to: Optional[date] = None,
+    ) -> list[MatchOut]:
         home_team = aliased(Team)
         away_team = aliased(Team)
         home_prediction = aliased(Prediction)
@@ -41,6 +59,11 @@ class AnalyticsRepository:
         )
         if league:
             stmt = stmt.where(League.slug == league)
+        if date_from:
+            stmt = stmt.where(Match.kickoff_at >= datetime.combine(date_from, time.min, tzinfo=timezone.utc))
+        if date_to:
+            date_to_exclusive = datetime.combine(date_to + timedelta(days=1), time.min, tzinfo=timezone.utc)
+            stmt = stmt.where(Match.kickoff_at < date_to_exclusive)
 
         return [
             MatchOut(
@@ -61,7 +84,7 @@ class AnalyticsRepository:
         self,
         min_ev: float = 0.03,
         league: Optional[str] = None,
-        bookmaker: Optional[str] = None,
+        bookmaker: Optional[Bookmaker] = None,
     ) -> list[ValueBetOut]:
         home_team = aliased(Team)
         away_team = aliased(Team)
@@ -79,7 +102,7 @@ class AnalyticsRepository:
         if league:
             stmt = stmt.where(League.slug == league)
         if bookmaker:
-            stmt = stmt.where(Odds.bookmaker == Bookmaker(bookmaker))
+            stmt = stmt.where(Odds.bookmaker == bookmaker)
 
         return [
             ValueBetOut(
@@ -119,3 +142,44 @@ class AnalyticsRepository:
             brier_score=metric.brier_score,
             sample_size=metric.sample_size,
         )
+
+    def get_odds_movement(
+        self,
+        match_id: str,
+        bookmaker: Optional[Bookmaker] = None,
+        selection: Optional[Selection] = None,
+    ) -> list[OddsMovementPointOut]:
+        try:
+            parsed_match_id = PythonUUID(match_id)
+        except ValueError:
+            return []
+
+        stmt = (
+            select(OddsHistory, Prediction)
+            .join(
+                Prediction,
+                (Prediction.match_id == OddsHistory.match_id)
+                & (Prediction.selection == OddsHistory.selection),
+            )
+            .where(OddsHistory.match_id == parsed_match_id)
+            .order_by(OddsHistory.sampled_at.asc())
+        )
+        if bookmaker:
+            stmt = stmt.where(OddsHistory.bookmaker == bookmaker)
+        if selection:
+            stmt = stmt.where(OddsHistory.selection == selection)
+
+        rows = self.db.execute(stmt).all()
+        if not rows:
+            return []
+
+        opening = rows[0][0].decimal_odds
+        return [
+            OddsMovementPointOut(
+                time=odds_history.sampled_at.strftime("%m-%d %H:%M"),
+                opening=opening,
+                current=odds_history.decimal_odds,
+                fair=round(1 / prediction.probability, 4),
+            )
+            for odds_history, prediction in rows
+        ]

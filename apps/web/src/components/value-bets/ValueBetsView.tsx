@@ -14,7 +14,7 @@ export function ValueBetsView() {
   const locale = useLocale();
   const isRu = locale !== 'en';
   const {league, minEv, setLeague, setMinEv} = useDashboardStore();
-  const loadValueBets = useCallback(() => getValueBets(minEv, locale), [locale, minEv]);
+  const loadValueBets = useCallback(() => getValueBets(minEv, locale, league), [league, locale, minEv]);
   const valueBetsState = useApiResource(loadValueBets, fallbackData.valueBets);
   const filteredBets = useMemo(
     () => valueBetsState.data.filter((bet) => (league === 'all' || bet.leagueSlug === league) && bet.ev >= minEv),

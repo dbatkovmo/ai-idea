@@ -20,5 +20,4 @@ def get_matches(
     date_to: Optional[date] = Query(default=None),
     db: Session = Depends(get_db),
 ) -> list[MatchOut]:
-    del date_from, date_to
-    return AnalyticsService(db).list_matches(league=league)
+    return AnalyticsService(db).list_matches(league=league, date_from=date_from, date_to=date_to)

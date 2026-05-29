@@ -48,3 +48,37 @@ class ModelStatsOut(BaseModel):
     max_drawdown: float
     brier_score: float
     sample_size: int
+
+
+class OddsMovementPointOut(BaseModel):
+    time: str
+    opening: float = Field(gt=1)
+    current: float = Field(gt=1)
+    fair: float = Field(gt=1)
+
+
+class BacktestRunIn(BaseModel):
+    window: str = Field(default="90D")
+    league: str | None = None
+    model_version: str = Field(default="poisson-elo-v1")
+    min_ev: float = Field(default=0.03, ge=0)
+
+
+class ProfitCurvePointOut(BaseModel):
+    period: str
+    bankroll: float
+    drawdown: float
+
+
+class BacktestResultOut(BaseModel):
+    id: str
+    model_version: str
+    window: str
+    league: str
+    roi: float
+    clv: float
+    max_drawdown: float
+    hit_rate: float
+    sample_size: int
+    losing_streak: int
+    profit_curve: list[ProfitCurvePointOut]

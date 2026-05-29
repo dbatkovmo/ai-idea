@@ -8,6 +8,8 @@ node_modules/
 out/
 dist/
 coverage/
+*.log
+*.tsbuildinfo
 
 .venv/
 __pycache__/
@@ -20,3 +22,5 @@ postgres_data/
 redis_data/
 
 .idea/workspace.xml
+.idea/inspectionProfiles/
+.idea/vcs.xml

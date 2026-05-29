@@ -1,5 +1,6 @@
 export type ValueBet = {
   id: string;
+  matchId: string;
   league: string;
   leagueSlug: string;
   kickoff: string;
@@ -42,6 +43,26 @@ export type ModelStats = {
   maxDrawdown: number;
   brierScore: number;
   sampleSize: number;
+};
+
+export type ProfitCurvePoint = {
+  period: string;
+  bankroll: number;
+  drawdown: number;
+};
+
+export type BacktestResult = {
+  id: string;
+  modelVersion: string;
+  window: string;
+  league: string;
+  roi: number;
+  clv: number;
+  maxDrawdown: number;
+  hitRate: number;
+  sampleSize: number;
+  losingStreak: number;
+  profitCurve: ProfitCurvePoint[];
 };
 
 export type ApiState<T> = {

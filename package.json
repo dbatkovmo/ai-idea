@@ -3,10 +3,10 @@
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "scripts": {
-    "dev:api": "uvicorn app.main:app --reload --app-dir apps/api",
+    "dev:api": "apps\\api\\.venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --app-dir apps/api",
     "dev:web": "pnpm --dir apps/web dev",
-    "db:migrate": "cd apps/api && alembic upgrade head",
-    "db:seed": "cd apps/api && python -m app.db.seed",
+    "db:migrate": "cd apps\\api && .venv\\Scripts\\python.exe -m alembic upgrade head",
+    "db:seed": "cd apps\\api && .venv\\Scripts\\python.exe -m app.db.seed",
     "lint:web": "pnpm --dir apps/web lint",
     "typecheck:web": "pnpm --dir apps/web typecheck"
   },

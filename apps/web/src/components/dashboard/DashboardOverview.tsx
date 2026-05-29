@@ -6,7 +6,7 @@ import {useLocale} from 'next-intl';
 import {useCallback, useMemo} from 'react';
 import {useDashboardStore} from '@/store/dashboard-store';
 import {mockOddsMovement} from '@/lib/mock-data';
-import {fallbackData, getModelStats, getValueBets} from '@/lib/api';
+import {fallbackData, getModelStats, getOddsMovement, getValueBets} from '@/lib/api';
 import {useApiResource} from '@/hooks/use-api-resource';
 import {DataStatus} from '@/components/common/DataStatus';
 import {OddsMovementChart} from './OddsMovementChart';
@@ -16,7 +16,7 @@ import {ValueBetsTable} from './ValueBetsTable';
 export function DashboardOverview() {
   const locale = useLocale();
   const {league, minEv, setLeague, setMinEv} = useDashboardStore();
-  const loadValueBets = useCallback(() => getValueBets(minEv, locale), [locale, minEv]);
+  const loadValueBets = useCallback(() => getValueBets(minEv, locale, league), [league, locale, minEv]);
   const loadModelStats = useCallback(() => getModelStats(), []);
   const valueBetsState = useApiResource(loadValueBets, fallbackData.valueBets);
   const modelStatsState = useApiResource(loadModelStats, fallbackData.modelStats);
@@ -26,6 +26,13 @@ export function DashboardOverview() {
     [league, minEv, valueBetsState.data]
   );
   const stats = modelStatsState.data;
+  const activeBet = filteredBets[0];
+  const activeMatchId = activeBet?.matchId ?? 'match-001';
+  const loadOddsMovement = useCallback(
+    () => getOddsMovement(activeMatchId, activeBet?.bookmaker, activeBet?.selection),
+    [activeBet?.bookmaker, activeBet?.selection, activeMatchId]
+  );
+  const oddsMovementState = useApiResource(loadOddsMovement, mockOddsMovement);
 
   return (
     <main className="dashboard">
@@ -94,8 +101,9 @@ export function DashboardOverview() {
         <div className="panel">
           <div className="panel__header">
             <h2 className="panel__title">Odds Movement</h2>
+            <DataStatus {...oddsMovementState} />
           </div>
-          <OddsMovementChart data={mockOddsMovement} />
+          <OddsMovementChart data={oddsMovementState.data} />
         </div>
       </section>
     </main>

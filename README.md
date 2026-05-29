@@ -51,16 +51,62 @@ Run services individually:
 
 ```bash
 pnpm --dir apps/web dev
-uvicorn app.main:app --reload --app-dir apps/api
+apps/api/.venv/Scripts/python.exe -m uvicorn app.main:app --reload --app-dir apps/api
+```
+
+On Windows through the root package scripts:
+
+```powershell
+cmd /c pnpm dev:web
+cmd /c pnpm dev:api
+```
+
+If the API is run outside Docker, point it at a local database host:
+
+```powershell
+$env:POSTGRES_HOST="localhost"
+cmd /c pnpm dev:api
 ```
 
 Run database setup inside the API environment:
 
 ```bash
 cd apps/api
-alembic upgrade head
-python -m app.db.seed
+.venv/Scripts/python.exe -m alembic upgrade head
+.venv/Scripts/python.exe -m app.db.seed
 ```
+
+## Local URLs
+
+- Web dashboard: `http://localhost:3000/ru`
+- API health: `http://localhost:8000/api/v1/health`
+- API readiness with database check: `http://localhost:8000/api/v1/ready`
+- Nginx gateway when Docker Compose is running: `http://localhost:8080/ru`
+
+`/health` only confirms that the FastAPI process is alive. `/ready` checks database connectivity and returns `503` until PostgreSQL is available.
+
+## Implemented MVP API
+
+- `GET /api/v1/health`
+- `GET /api/v1/ready`
+- `GET /api/v1/matches?league=la-liga&date_from=2026-01-01&date_to=2026-12-31`
+- `GET /api/v1/value-bets?min_ev=0.05&league=premier-league&bookmaker=fonbet`
+- `GET /api/v1/matches/{match_id}/odds-movement?bookmaker=fonbet&selection=home`
+- `GET /api/v1/backtests/latest`
+- `POST /api/v1/backtests`
+
+Example backtest request:
+
+```json
+{
+  "window": "90D",
+  "league": "premier-league",
+  "model_version": "poisson-elo-v1",
+  "min_ev": 0.03
+}
+```
+
+When PostgreSQL is unavailable, read endpoints fall back to filtered mock data so the dashboard can still run in local UI mode. Docker Compose is the intended full-stack mode for database-backed data.
 
 ## Product Principle
 
