@@ -1,16 +1,22 @@
 'use client';
 
-import {Switch} from 'antd';
+import {Card, Flex, List, Switch, Tag, Typography} from 'antd';
 import {useLocale} from 'next-intl';
 
-const settings = [
-  [{en: 'football-data.org collector', ru: 'Сборщик football-data.org'}, true],
-  [{en: 'Fonbet odds collector', ru: 'Сборщик коэффициентов Fonbet'}, false],
-  [{en: 'Winline odds collector', ru: 'Сборщик коэффициентов Winline'}, false],
-  [{en: '15 minute scheduler', ru: 'Обновление каждые 15 минут'}, false],
-  [{en: 'CLV tracking', ru: 'Отслеживание CLV'}, true],
-  [{en: 'Leakage guardrails', ru: 'Защита от leakage'}, true]
-] as const;
+type LocaleKey = 'en' | 'ru';
+type SettingItem = {
+  label: Record<LocaleKey, string>;
+  enabled: boolean;
+};
+
+const settings: SettingItem[] = [
+  {label: {en: 'football-data.org collector', ru: '\u0421\u0431\u043e\u0440\u0449\u0438\u043a football-data.org'}, enabled: true},
+  {label: {en: 'Fonbet odds collector', ru: '\u0421\u0431\u043e\u0440\u0449\u0438\u043a \u043a\u043e\u044d\u0444\u0444\u0438\u0446\u0438\u0435\u043d\u0442\u043e\u0432 Fonbet'}, enabled: false},
+  {label: {en: 'Winline odds collector', ru: '\u0421\u0431\u043e\u0440\u0449\u0438\u043a \u043a\u043e\u044d\u0444\u0444\u0438\u0446\u0438\u0435\u043d\u0442\u043e\u0432 Winline'}, enabled: false},
+  {label: {en: '15 minute scheduler', ru: '\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u043a\u0430\u0436\u0434\u044b\u0435 15 \u043c\u0438\u043d\u0443\u0442'}, enabled: false},
+  {label: {en: 'CLV tracking', ru: '\u041e\u0442\u0441\u043b\u0435\u0436\u0438\u0432\u0430\u043d\u0438\u0435 CLV'}, enabled: true},
+  {label: {en: 'Leakage guardrails', ru: '\u0417\u0430\u0449\u0438\u0442\u0430 \u043e\u0442 leakage'}, enabled: true}
+];
 
 const copy = {
   en: {
@@ -20,40 +26,37 @@ const copy = {
     modules: 'Platform Modules'
   },
   ru: {
-    eyebrow: 'Окружение',
-    title: 'Настройки',
-    badge: 'MVP-конфиг',
-    modules: 'Модули платформы'
+    eyebrow: '\u041e\u043a\u0440\u0443\u0436\u0435\u043d\u0438\u0435',
+    title: '\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438',
+    badge: 'MVP-\u043a\u043e\u043d\u0444\u0438\u0433',
+    modules: '\u041c\u043e\u0434\u0443\u043b\u0438 \u043f\u043b\u0430\u0442\u0444\u043e\u0440\u043c\u044b'
   }
 };
 
 export function SettingsView() {
   const locale = useLocale();
-  const activeLocale = locale === 'en' ? 'en' : 'ru';
+  const activeLocale: LocaleKey = locale === 'en' ? 'en' : 'ru';
 
   return (
     <main className="dashboard">
-      <section className="page-header">
+      <Flex className="page-header" align="center" justify="space-between" gap={18}>
         <div>
-          <p className="page-header__eyebrow">{copy[activeLocale].eyebrow}</p>
-          <h2 className="page-header__title">{copy[activeLocale].title}</h2>
+          <Typography.Text className="page-header__eyebrow">{copy[activeLocale].eyebrow}</Typography.Text>
+          <Typography.Title level={2} className="page-header__title">{copy[activeLocale].title}</Typography.Title>
         </div>
-        <span className="data-pill">{copy[activeLocale].badge}</span>
-      </section>
+        <Tag className="tag-soft">{copy[activeLocale].badge}</Tag>
+      </Flex>
 
-      <section className="panel">
-        <div className="panel__header">
-          <h3 className="panel__title">{copy[activeLocale].modules}</h3>
-        </div>
-        <div className="metric-list">
-          {settings.map(([label, enabled]) => (
-            <div className="metric-list__row" key={label.en}>
-              <span>{label[activeLocale]}</span>
-              <Switch checked={enabled} disabled />
-            </div>
-          ))}
-        </div>
-      </section>
+      <Card className="analytics-card" title={copy[activeLocale].modules} variant="borderless">
+        <List
+          dataSource={settings}
+          renderItem={({label, enabled}) => (
+            <List.Item actions={[<Switch checked={enabled} disabled key={label.en} />]}>
+              <Typography.Text>{label[activeLocale]}</Typography.Text>
+            </List.Item>
+          )}
+        />
+      </Card>
     </main>
   );
 }

@@ -1,27 +1,67 @@
 'use client';
 
-import {Segmented, Tag} from 'antd';
+import {Card, Flex, Segmented, Table, Tag, Typography, type TableColumnsType} from 'antd';
 import {useLocale} from 'next-intl';
 import {useCallback, useMemo, useState} from 'react';
 import {DataStatus} from '@/components/common/DataStatus';
 import {EmptyState} from '@/components/common/EmptyState';
 import {fallbackData, getMatches} from '@/lib/api';
 import {useApiResource} from '@/hooks/use-api-resource';
-import type {MatchStatusFilter} from '@/types/analytics';
+import type {Match, MatchStatusFilter} from '@/types/analytics';
 
 const statusLabels = {
-  scheduled: 'Предстоящий',
+  scheduled: '\u041f\u0440\u0435\u0434\u0441\u0442\u043e\u044f\u0449\u0438\u0439',
   live: 'Live',
-  finished: 'Завершен',
-  postponed: 'Перенесен',
-  cancelled: 'Отменен'
+  finished: '\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d',
+  postponed: '\u041f\u0435\u0440\u0435\u043d\u0435\u0441\u0435\u043d',
+  cancelled: '\u041e\u0442\u043c\u0435\u043d\u0435\u043d'
 } as const;
 
 function statusColor(status: string) {
-  if (status === 'scheduled') return 'green';
+  if (status === 'scheduled') return 'success';
   if (status === 'finished') return 'default';
-  if (status === 'live') return 'red';
-  return 'orange';
+  if (status === 'live') return 'error';
+  return 'warning';
+}
+
+function getColumns(isRu: boolean): TableColumnsType<Match> {
+  return [
+    {
+      title: isRu ? '\u041c\u0430\u0442\u0447' : 'Match',
+      key: 'match',
+      render: (_, row) => <Typography.Text strong>{row.homeTeam} - {row.awayTeam}</Typography.Text>
+    },
+    {title: isRu ? '\u041b\u0438\u0433\u0430' : 'League', dataIndex: 'league', key: 'league'},
+    {title: isRu ? '\u041d\u0430\u0447\u0430\u043b\u043e' : 'Kickoff', dataIndex: 'kickoff', key: 'kickoff'},
+    {
+      title: isRu ? '\u041f1' : 'Home',
+      dataIndex: 'homeProbability',
+      key: 'homeProbability',
+      render: (value: number) => `${(value * 100).toFixed(1)}%`
+    },
+    {
+      title: 'X',
+      dataIndex: 'drawProbability',
+      key: 'drawProbability',
+      render: (value: number) => `${(value * 100).toFixed(1)}%`
+    },
+    {
+      title: isRu ? '\u041f2' : 'Away',
+      dataIndex: 'awayProbability',
+      key: 'awayProbability',
+      render: (value: number) => `${(value * 100).toFixed(1)}%`
+    },
+    {
+      title: isRu ? '\u0421\u0442\u0430\u0442\u0443\u0441' : 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => (
+        <Tag color={statusColor(status)}>
+          {isRu ? statusLabels[status as keyof typeof statusLabels] ?? status : status}
+        </Tag>
+      )
+    }
+  ];
 }
 
 export function MatchesView() {
@@ -34,82 +74,59 @@ export function MatchesView() {
 
   return (
     <main className="dashboard">
-      <section className="page-header">
+      <Flex className="page-header" align="center" justify="space-between" gap={18}>
         <div>
-          <p className="page-header__eyebrow">{isRu ? 'Календарь матчей' : 'Fixture board'}</p>
-          <h2 className="page-header__title">{isRu ? 'Матчи' : 'Matches'}</h2>
+          <Typography.Text className="page-header__eyebrow">
+            {isRu ? '\u041a\u0430\u043b\u0435\u043d\u0434\u0430\u0440\u044c \u043c\u0430\u0442\u0447\u0435\u0439' : 'Fixture board'}
+          </Typography.Text>
+          <Typography.Title level={2} className="page-header__title">
+            {isRu ? '\u041c\u0430\u0442\u0447\u0438' : 'Matches'}
+          </Typography.Title>
         </div>
         <DataStatus {...matchesState} />
-      </section>
+      </Flex>
 
-      <section className="dashboard__toolbar" aria-label={isRu ? 'Фильтры матчей' : 'Match filters'}>
+      <Card className="filter-card" variant="borderless">
         <Segmented
           value={status}
           onChange={(value) => setStatus(value as MatchStatusFilter)}
           options={[
-            {label: isRu ? 'Предстоящие' : 'Upcoming', value: 'scheduled'},
-            {label: isRu ? 'Завершенные' : 'Finished', value: 'finished'},
-            {label: isRu ? 'Все' : 'All', value: 'all'}
+            {label: isRu ? '\u041f\u0440\u0435\u0434\u0441\u0442\u043e\u044f\u0449\u0438\u0435' : 'Upcoming', value: 'scheduled'},
+            {label: isRu ? '\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0435' : 'Finished', value: 'finished'},
+            {label: isRu ? '\u0412\u0441\u0435' : 'All', value: 'all'}
           ]}
         />
-      </section>
+      </Card>
 
-      <section className="panel">
-        <div className="panel__header">
-          <h3 className="panel__title">{isRu ? 'Матрица вероятностей 1X2' : 'Pre-Match Probability Matrix'}</h3>
-          <span className="data-pill">{isRu ? `${rows.length} матчей` : `${rows.length} matches`}</span>
-        </div>
+      <Card
+        className="analytics-card"
+        title={isRu ? '\u041c\u0430\u0442\u0440\u0438\u0446\u0430 \u0432\u0435\u0440\u043e\u044f\u0442\u043d\u043e\u0441\u0442\u0435\u0439 1X2' : 'Pre-Match Probability Matrix'}
+        extra={<Tag className="tag-soft">{isRu ? `${rows.length} \u043c\u0430\u0442\u0447\u0435\u0439` : `${rows.length} matches`}</Tag>}
+        variant="borderless"
+      >
         {rows.length === 0 ? (
           <EmptyState
             title={
               status === 'scheduled'
                 ? isRu
-                  ? 'Предстоящих матчей сейчас нет. Переключи фильтр на "Завершенные", чтобы посмотреть историю.'
+                  ? '\u041f\u0440\u0435\u0434\u0441\u0442\u043e\u044f\u0449\u0438\u0445 \u043c\u0430\u0442\u0447\u0435\u0439 \u0441\u0435\u0439\u0447\u0430\u0441 \u043d\u0435\u0442. \u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0438 \u0444\u0438\u043b\u044c\u0442\u0440 \u043d\u0430 "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0435", \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u0441\u043c\u043e\u0442\u0440\u0435\u0442\u044c \u0438\u0441\u0442\u043e\u0440\u0438\u044e.'
                   : 'No upcoming matches. Switch to Finished to inspect historical fixtures.'
                 : isRu
-                  ? 'Нет матчей под текущий фильтр.'
+                  ? '\u041d\u0435\u0442 \u043c\u0430\u0442\u0447\u0435\u0439 \u043f\u043e\u0434 \u0442\u0435\u043a\u0443\u0449\u0438\u0439 \u0444\u0438\u043b\u044c\u0442\u0440.'
                   : 'No matches for the current filter.'
             }
           />
         ) : (
-          <div className="table-scroll">
-            <table className="value-table">
-              <thead className="value-table__head">
-                <tr>
-                  <th className="value-table__cell">{isRu ? 'Матч' : 'Match'}</th>
-                  <th className="value-table__cell">{isRu ? 'Лига' : 'League'}</th>
-                  <th className="value-table__cell">{isRu ? 'Начало' : 'Kickoff'}</th>
-                  <th className="value-table__cell">{isRu ? 'П1' : 'Home'}</th>
-                  <th className="value-table__cell">{isRu ? 'X' : 'Draw'}</th>
-                  <th className="value-table__cell">{isRu ? 'П2' : 'Away'}</th>
-                  <th className="value-table__cell">{isRu ? 'Статус' : 'Status'}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((match) => (
-                  <tr className="value-table__row" key={match.id}>
-                    <td className="value-table__cell">
-                      <span className="value-table__match">
-                        {match.homeTeam} - {match.awayTeam}
-                      </span>
-                    </td>
-                    <td className="value-table__cell">{match.league}</td>
-                    <td className="value-table__cell">{match.kickoff}</td>
-                    <td className="value-table__cell">{(match.homeProbability * 100).toFixed(1)}%</td>
-                    <td className="value-table__cell">{(match.drawProbability * 100).toFixed(1)}%</td>
-                    <td className="value-table__cell">{(match.awayProbability * 100).toFixed(1)}%</td>
-                    <td className="value-table__cell">
-                      <Tag color={statusColor(match.status)}>
-                        {isRu ? statusLabels[match.status as keyof typeof statusLabels] ?? match.status : match.status}
-                      </Tag>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table<Match>
+            className="premium-table"
+            columns={getColumns(isRu)}
+            dataSource={rows}
+            pagination={false}
+            rowKey="id"
+            scroll={{x: true}}
+          />
         )}
-      </section>
+      </Card>
     </main>
   );
 }

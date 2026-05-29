@@ -1,6 +1,6 @@
 'use client';
 
-import {Button, DatePicker, InputNumber, Select, Segmented} from 'antd';
+import {Button, Card, DatePicker, Flex, InputNumber, Select, Segmented, Statistic, Tag, Typography} from 'antd';
 import {RefreshCcw} from 'lucide-react';
 import {useLocale} from 'next-intl';
 import {useCallback, useMemo} from 'react';
@@ -38,20 +38,21 @@ export function DashboardOverview() {
 
   return (
     <main className="dashboard">
-      <section className="page-header">
+      <Flex className="page-header" align="center" justify="space-between" gap={18}>
         <div>
-          <p className="page-header__eyebrow">{isRu ? 'AI analytics' : 'AI analytics'}</p>
-          <h2 className="page-header__title">{isRu ? '\u0414\u0430\u0448\u0431\u043e\u0440\u0434' : 'Dashboard'}</h2>
+          <Typography.Text className="page-header__eyebrow">{isRu ? 'AI analytics' : 'AI analytics'}</Typography.Text>
+          <Typography.Title level={2} className="page-header__title">{isRu ? '\u0414\u0430\u0448\u0431\u043e\u0440\u0434' : 'Dashboard'}</Typography.Title>
         </div>
         <DataStatus
           isLoading={valueBetsState.isLoading || modelStatsState.isLoading}
           error={valueBetsState.error ?? modelStatsState.error}
           source={valueBetsState.source === 'api' && modelStatsState.source === 'api' ? 'api' : 'mock'}
         />
-      </section>
+      </Flex>
 
-      <section className="dashboard__toolbar" aria-label={isRu ? '\u0424\u0438\u043b\u044c\u0442\u0440\u044b \u0434\u0430\u0448\u0431\u043e\u0440\u0434\u0430' : 'Dashboard controls'}>
-        <div className="dashboard__filters">
+      <Card className="filter-card" variant="borderless">
+        <Flex wrap gap={10} align="center" justify="space-between">
+          <Flex wrap gap={10} align="center">
           <Select
             aria-label={isRu ? '\u041b\u0438\u0433\u0430' : 'League'}
             className="filter-control"
@@ -77,9 +78,10 @@ export function DashboardOverview() {
             onChange={(value) => setMinEv(Number(value ?? 0))}
           />
           <Segmented options={['1X2']} value="1X2" />
-        </div>
-        <Button icon={<RefreshCcw size={16} />}>{isRu ? '\u0421\u0438\u043d\u0445\u0440. odds' : 'Sync Odds'}</Button>
-      </section>
+          </Flex>
+          <Button icon={<RefreshCcw size={16} />}>{isRu ? '\u0421\u0438\u043d\u0445\u0440. odds' : 'Sync Odds'}</Button>
+        </Flex>
+      </Card>
 
       <section className="dashboard__stats" aria-label={isRu ? '\u0421\u0432\u043e\u0434\u043a\u0430 \u043c\u043e\u0434\u0435\u043b\u0438' : 'Model performance snapshot'}>
         <StatCard
@@ -101,55 +103,51 @@ export function DashboardOverview() {
       </section>
 
       <section className="dashboard__grid">
-        <div className="panel">
-          <div className="panel__header">
-            <h2 className="panel__title">Value Bets</h2>
-          </div>
+        <Card className="analytics-card" title="Value Bets" variant="borderless">
           <ValueBetsTable bets={filteredBets} />
-        </div>
+        </Card>
 
-        <div className="panel">
-          <div className="panel__header">
-            <h2 className="panel__title">{isRu ? '\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 odds' : 'Odds Movement'}</h2>
-            <div className="panel-actions">
+        <Card
+          className="analytics-card"
+          title={isRu ? '\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 odds' : 'Odds Movement'}
+          extra={
               <Select
                 aria-label={isRu ? '\u0420\u044b\u043d\u043e\u043a' : 'Market'}
                 className="filter-control"
                 value="all"
                 options={[{value: 'all', label: isRu ? '\u0412\u0441\u0435 \u0440\u044b\u043d\u043a\u0438' : 'All markets'}]}
               />
-            </div>
-          </div>
+          }
+          variant="borderless"
+        >
           <div className="chart-legend">
             <span className="chart-legend__item"><span className="chart-legend__dot" />Current</span>
             <span className="chart-legend__item"><span className="chart-legend__dot chart-legend__dot--blue" />Fair</span>
           </div>
           <OddsMovementChart data={oddsMovementState.data} />
-        </div>
+        </Card>
       </section>
 
+      <Card className="summary-card" variant="borderless">
       <section className="summary-bar" aria-label={isRu ? '\u0421\u0432\u043e\u0434\u043d\u0430\u044f \u0430\u043d\u0430\u043b\u0438\u0442\u0438\u043a\u0430' : 'Analytics summary'}>
         <div className="summary-bar__item">
-          <span className="summary-bar__label">ROI</span>
-          <span className="summary-bar__value">{`${(stats.roi * 100).toFixed(1)}%`}</span>
-          <span className="summary-bar__trend">{isRu ? '\u041c\u043e\u0434\u0435\u043b\u044c \u0432 \u043f\u043b\u044e\u0441\u0435' : 'Positive model result'}</span>
+          <Statistic title="ROI" value={`${(stats.roi * 100).toFixed(1)}%`} />
+          <Tag className="tag-soft">{isRu ? '\u041c\u043e\u0434\u0435\u043b\u044c \u0432 \u043f\u043b\u044e\u0441\u0435' : 'Positive model result'}</Tag>
         </div>
         <div className="summary-bar__item">
-          <span className="summary-bar__label">Yield</span>
-          <span className="summary-bar__value">{`${(stats.yieldRate * 100).toFixed(1)}%`}</span>
-          <span className="summary-bar__trend">{isRu ? '\u041d\u0430 \u0432\u044b\u0431\u043e\u0440\u043a\u0435' : 'On sample'}</span>
+          <Statistic title="Yield" value={`${(stats.yieldRate * 100).toFixed(1)}%`} />
+          <Tag className="tag-soft">{isRu ? '\u041d\u0430 \u0432\u044b\u0431\u043e\u0440\u043a\u0435' : 'On sample'}</Tag>
         </div>
         <div className="summary-bar__item">
-          <span className="summary-bar__label">{isRu ? '\u0412\u044b\u0431\u043e\u0440\u043a\u0430' : 'Sample'}</span>
-          <span className="summary-bar__value">{stats.sampleSize}</span>
-          <span className="summary-bar__trend">{isRu ? '\u0412\u0430\u043b\u0438\u0434\u0438\u0440\u0443\u0435\u0442\u0441\u044f' : 'In validation'}</span>
+          <Statistic title={isRu ? '\u0412\u044b\u0431\u043e\u0440\u043a\u0430' : 'Sample'} value={stats.sampleSize} />
+          <Tag className="tag-soft">{isRu ? '\u0412\u0430\u043b\u0438\u0434\u0438\u0440\u0443\u0435\u0442\u0441\u044f' : 'In validation'}</Tag>
         </div>
         <div className="summary-bar__item">
-          <span className="summary-bar__label">{isRu ? '\u041f\u0440\u043e\u0441\u0430\u0434\u043a\u0430' : 'Drawdown'}</span>
-          <span className="summary-bar__value">{`${(stats.maxDrawdown * 100).toFixed(1)}%`}</span>
-          <span className="summary-bar__trend">{isRu ? '\u041a\u043e\u043d\u0442\u0440\u043e\u043b\u044c \u0440\u0438\u0441\u043a\u0430' : 'Risk controlled'}</span>
+          <Statistic title={isRu ? '\u041f\u0440\u043e\u0441\u0430\u0434\u043a\u0430' : 'Drawdown'} value={`${(stats.maxDrawdown * 100).toFixed(1)}%`} />
+          <Tag className="tag-soft">{isRu ? '\u041a\u043e\u043d\u0442\u0440\u043e\u043b\u044c \u0440\u0438\u0441\u043a\u0430' : 'Risk controlled'}</Tag>
         </div>
       </section>
+      </Card>
     </main>
   );
 }

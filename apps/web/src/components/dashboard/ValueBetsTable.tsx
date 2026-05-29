@@ -1,66 +1,74 @@
 'use client';
 
-import {flexRender, getCoreRowModel, useReactTable, type ColumnDef} from '@tanstack/react-table';
+import {Table, Tag, Typography, type TableColumnsType} from 'antd';
 import {ChevronRight} from 'lucide-react';
 import {useLocale} from 'next-intl';
 import type {ValueBet} from '@/types/analytics';
 
-function getColumns(isRu: boolean): ColumnDef<ValueBet>[] {
+const {Text} = Typography;
+
+function getColumns(isRu: boolean): TableColumnsType<ValueBet> {
   return [
     {
-      accessorKey: 'match',
-      header: isRu ? '\u041c\u0430\u0442\u0447' : 'Match',
-      cell: ({row}) => (
-        <span className="value-table__match">
-          {row.original.homeTeam} - {row.original.awayTeam}
-          <span className="value-table__muted">
-            {row.original.league} · {row.original.kickoff}
-          </span>
-        </span>
+      title: isRu ? '\u041c\u0430\u0442\u0447' : 'Match',
+      key: 'match',
+      render: (_, row) => (
+        <Typography.Text strong className="table-match">
+          {row.homeTeam} - {row.awayTeam}
+          <Text type="secondary" className="table-muted">
+            {row.league} · {row.kickoff}
+          </Text>
+        </Typography.Text>
       )
     },
     {
-      accessorKey: 'selection',
-      header: isRu ? '\u041f\u0438\u043a' : 'Pick',
-      cell: ({row}) => {
+      title: isRu ? '\u041f\u0438\u043a' : 'Pick',
+      dataIndex: 'selection',
+      key: 'selection',
+      render: (selection: ValueBet['selection']) => {
         const selectionMap = {
           Home: isRu ? '\u041f1' : 'Home',
           Draw: 'X',
           Away: isRu ? '\u041f2' : 'Away'
         };
 
-        return <span className="value-table__pick">{selectionMap[row.original.selection]}</span>;
+        return <Tag className="tag-pick">{selectionMap[selection]}</Tag>;
       }
     },
     {
-      accessorKey: 'modelProbability',
-      header: isRu ? '\u041c\u043e\u0434\u0435\u043b\u044c' : 'Model',
-      cell: ({row}) => `${(row.original.modelProbability * 100).toFixed(1)}%`
+      title: isRu ? '\u041c\u043e\u0434\u0435\u043b\u044c' : 'Model',
+      dataIndex: 'modelProbability',
+      key: 'modelProbability',
+      render: (value: number) => `${(value * 100).toFixed(1)}%`
     },
     {
-      accessorKey: 'bookmakerOdds',
-      header: 'Odds',
-      cell: ({row}) => row.original.bookmakerOdds.toFixed(2)
+      title: 'Odds',
+      dataIndex: 'bookmakerOdds',
+      key: 'bookmakerOdds',
+      render: (value: number) => value.toFixed(2)
     },
     {
-      accessorKey: 'fairOdds',
-      header: 'Fair',
-      cell: ({row}) => row.original.fairOdds.toFixed(2)
+      title: 'Fair',
+      dataIndex: 'fairOdds',
+      key: 'fairOdds',
+      render: (value: number) => value.toFixed(2)
     },
     {
-      accessorKey: 'ev',
-      header: 'EV',
-      cell: ({row}) => <span className="value-table__positive">{(row.original.ev * 100).toFixed(1)}%</span>
+      title: 'EV',
+      dataIndex: 'ev',
+      key: 'ev',
+      render: (value: number) => <Tag className="tag-ev">{(value * 100).toFixed(1)}%</Tag>
     },
     {
-      accessorKey: 'bookmaker',
-      header: isRu ? '\u0411\u0443\u043a' : 'Book',
-      cell: ({row}) => row.original.bookmaker
+      title: isRu ? '\u0411\u0443\u043a' : 'Book',
+      dataIndex: 'bookmaker',
+      key: 'bookmaker'
     },
     {
-      id: 'open',
-      header: '',
-      cell: () => <ChevronRight className="value-table__chevron" size={16} aria-hidden="true" />
+      title: '',
+      key: 'open',
+      width: 42,
+      render: () => <ChevronRight className="table-chevron" size={16} aria-hidden="true" />
     }
   ];
 }
@@ -71,39 +79,15 @@ type ValueBetsTableProps = {
 
 export function ValueBetsTable({bets}: ValueBetsTableProps) {
   const locale = useLocale();
-  const columns = getColumns(locale !== 'en');
-  const table = useReactTable({
-    data: bets,
-    columns,
-    getCoreRowModel: getCoreRowModel()
-  });
 
   return (
-    <div className="table-scroll">
-      <table className="value-table">
-        <thead className="value-table__head">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th className="value-table__cell" key={header.id}>
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr className="value-table__row" key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td className="value-table__cell" key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table<ValueBet>
+      className="premium-table"
+      columns={getColumns(locale !== 'en')}
+      dataSource={bets}
+      pagination={false}
+      rowKey="id"
+      scroll={{x: true}}
+    />
   );
 }

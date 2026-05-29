@@ -1,3 +1,5 @@
+import {Card, Statistic, Typography} from 'antd';
+
 type StatCardProps = {
   label: string;
   value: string;
@@ -6,13 +8,12 @@ type StatCardProps = {
 
 export function StatCard({label, value, delta}: StatCardProps) {
   return (
-    <article className="stat-card">
-      <span className="stat-card__icon" aria-hidden="true">
+    <Card className="kpi-card" variant="borderless">
+      <span className="kpi-card__chip" aria-hidden="true">
         1X2
       </span>
-      <p className="stat-card__label">{label}</p>
-      <p className="stat-card__value">{value}</p>
-      <span className="stat-card__delta">{delta}</span>
-    </article>
+      <Statistic className="kpi-card__stat" title={label} value={value} />
+      <Typography.Text className="kpi-card__delta">{delta}</Typography.Text>
+    </Card>
   );
 }

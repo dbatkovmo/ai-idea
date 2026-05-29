@@ -1,6 +1,6 @@
 'use client';
 
-import {DatePicker, InputNumber, Select, Segmented} from 'antd';
+import {Card, DatePicker, Flex, InputNumber, Select, Segmented, Tag, Typography} from 'antd';
 import {useLocale} from 'next-intl';
 import {useCallback, useMemo} from 'react';
 import {DataStatus} from '@/components/common/DataStatus';
@@ -23,23 +23,25 @@ export function ValueBetsView() {
 
   return (
     <main className="dashboard">
-      <section className="page-header">
+      <Flex className="page-header" align="center" justify="space-between" gap={18}>
         <div>
-          <p className="page-header__eyebrow">{isRu ? '\u0420\u044b\u043d\u043e\u0447\u043d\u043e\u0435 \u043f\u0440\u0435\u0438\u043c\u0443\u0449\u0435\u0441\u0442\u0432\u043e' : 'Market edge'}</p>
-          <h2 className="page-header__title">{isRu ? 'Value Bets' : 'Value Bets'}</h2>
+          <Typography.Text className="page-header__eyebrow">
+            {isRu ? '\u0420\u044b\u043d\u043e\u0447\u043d\u043e\u0435 \u043f\u0440\u0435\u0438\u043c\u0443\u0449\u0435\u0441\u0442\u0432\u043e' : 'Market edge'}
+          </Typography.Text>
+          <Typography.Title level={2} className="page-header__title">Value Bets</Typography.Title>
         </div>
         <DataStatus {...valueBetsState} />
-      </section>
+      </Flex>
 
-      <section className="dashboard__toolbar" aria-label={isRu ? 'Фильтры value bets' : 'Value bet filters'}>
-        <div className="dashboard__filters">
+      <Card className="filter-card" variant="borderless">
+        <Flex wrap gap={10} align="center">
           <Select
-            aria-label={isRu ? 'Лига' : 'League'}
+            aria-label={isRu ? '\u041b\u0438\u0433\u0430' : 'League'}
             className="filter-control"
             value={league}
             onChange={setLeague}
             options={[
-              {value: 'all', label: isRu ? 'Все лиги' : 'All leagues'},
+              {value: 'all', label: isRu ? '\u0412\u0441\u0435 \u043b\u0438\u0433\u0438' : 'All leagues'},
               {value: 'premier-league', label: 'Premier League'},
               {value: 'la-liga', label: 'La Liga'},
               {value: 'serie-a', label: 'Serie A'},
@@ -47,9 +49,9 @@ export function ValueBetsView() {
               {value: 'ligue-1', label: 'Ligue 1'}
             ]}
           />
-          <DatePicker.RangePicker aria-label={isRu ? 'Диапазон дат' : 'Date range'} />
+          <DatePicker.RangePicker aria-label={isRu ? '\u0414\u0438\u0430\u043f\u0430\u0437\u043e\u043d \u0434\u0430\u0442' : 'Date range'} />
           <InputNumber
-            aria-label={isRu ? 'Минимальный EV' : 'Minimum EV'}
+            aria-label={isRu ? '\u041c\u0438\u043d\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 EV' : 'Minimum EV'}
             min={0}
             max={0.3}
             step={0.01}
@@ -58,16 +60,17 @@ export function ValueBetsView() {
             onChange={(value) => setMinEv(Number(value ?? 0))}
           />
           <Segmented options={['1X2']} value="1X2" />
-        </div>
-      </section>
+        </Flex>
+      </Card>
 
-      <section className="panel">
-        <div className="panel__header">
-          <h3 className="panel__title">{isRu ? 'Отобранные 1X2-сигналы' : 'Qualified 1X2 Signals'}</h3>
-          <span className="data-pill">{isRu ? `${filteredBets.length} активных` : `${filteredBets.length} active`}</span>
-        </div>
+      <Card
+        className="analytics-card"
+        title={isRu ? '\u041e\u0442\u043e\u0431\u0440\u0430\u043d\u043d\u044b\u0435 1X2-\u0441\u0438\u0433\u043d\u0430\u043b\u044b' : 'Qualified 1X2 Signals'}
+        extra={<Tag className="tag-soft">{isRu ? `${filteredBets.length} \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445` : `${filteredBets.length} active`}</Tag>}
+        variant="borderless"
+      >
         {filteredBets.length === 0 ? <EmptyState /> : <ValueBetsTable bets={filteredBets} />}
-      </section>
+      </Card>
     </main>
   );
 }
