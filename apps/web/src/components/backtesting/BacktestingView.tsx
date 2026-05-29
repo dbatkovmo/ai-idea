@@ -47,16 +47,22 @@ export function BacktestingView() {
             {isRu ? '\u0411\u044d\u043a\u0442\u0435\u0441\u0442\u0438\u043d\u0433' : 'Backtesting'}
           </Typography.Title>
         </div>
-        <Button icon={<Play size={16} />} loading={isRunning} onClick={handleRun}>
+        <Button className="run-button" icon={<Play size={16} />} loading={isRunning} onClick={handleRun}>
           {isRu ? '\u0417\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c walk-forward' : 'Run Walk-Forward'}
         </Button>
       </Flex>
 
       <Card className="filter-card" variant="borderless">
-        <Flex wrap gap={10} align="center" justify="space-between">
-          <Flex wrap gap={10} align="center">
-            <Segmented options={['30D', '90D', 'Season', 'Custom']} value={window} onChange={(value) => setWindow(String(value))} />
+        <Flex className="filter-card__row" wrap gap={12} align="center" justify="space-between">
+          <Flex className="filter-card__controls" wrap gap={10} align="center">
             <Segmented
+              className="control-switch control-switch--period"
+              options={['30D', '90D', 'Season', 'Custom']}
+              value={window}
+              onChange={(value) => setWindow(String(value))}
+            />
+            <Segmented
+              className="control-switch control-switch--league"
               options={[
                 {label: isRu ? '\u0412\u0441\u0435' : 'All', value: 'all'},
                 {label: 'Premier League', value: 'premier-league'},
