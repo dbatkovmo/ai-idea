@@ -51,11 +51,11 @@ export function DashboardOverview() {
       </Flex>
 
       <Card className="filter-card" variant="borderless">
-        <Flex wrap gap={10} align="center" justify="space-between">
-          <Flex wrap gap={10} align="center">
+        <Flex className="filter-card__row" wrap gap={12} align="center" justify="space-between">
+          <Flex className="filter-card__controls" wrap gap={10} align="center">
           <Select
             aria-label={isRu ? '\u041b\u0438\u0433\u0430' : 'League'}
-            className="filter-control"
+            className="filter-control filter-control--league"
             value={league}
             onChange={setLeague}
             options={[
@@ -67,9 +67,13 @@ export function DashboardOverview() {
               {value: 'ligue-1', label: 'Ligue 1'}
             ]}
           />
-          <DatePicker.RangePicker aria-label={isRu ? '\u0414\u0438\u0430\u043f\u0430\u0437\u043e\u043d \u0434\u0430\u0442' : 'Date range'} />
+          <DatePicker.RangePicker
+            aria-label={isRu ? '\u0414\u0438\u0430\u043f\u0430\u0437\u043e\u043d \u0434\u0430\u0442' : 'Date range'}
+            className="filter-control filter-control--date"
+          />
           <InputNumber
             aria-label={isRu ? '\u041c\u0438\u043d\u0438\u043c\u0430\u043b\u044c\u043d\u044b\u0439 EV' : 'Minimum EV'}
+            className="filter-control filter-control--ev"
             min={0}
             max={0.3}
             step={0.01}
@@ -77,9 +81,9 @@ export function DashboardOverview() {
             prefix="EV"
             onChange={(value) => setMinEv(Number(value ?? 0))}
           />
-          <Segmented options={['1X2']} value="1X2" />
+          <Segmented className="market-switch" options={[{label: '1X2', value: '1X2'}]} value="1X2" />
           </Flex>
-          <Button icon={<RefreshCcw size={16} />}>{isRu ? '\u0421\u0438\u043d\u0445\u0440. odds' : 'Sync Odds'}</Button>
+          <Button className="sync-button" icon={<RefreshCcw size={16} />}>{isRu ? '\u0421\u0438\u043d\u0445\u0440. odds' : 'Sync Odds'}</Button>
         </Flex>
       </Card>
 

@@ -429,8 +429,21 @@ textarea {
   border-radius: 16px !important;
 
   .ant-card-body {
-    padding: 12px;
+    padding: 20px 22px;
   }
+}
+
+.filter-card__row,
+.filter-card__controls {
+  width: 100%;
+}
+
+.filter-card__row {
+  gap: 14px !important;
+}
+
+.filter-card__controls {
+  flex: 1 1 auto;
 }
 
 .analytics-card,
@@ -555,18 +568,104 @@ textarea {
 }
 
 .filter-control {
-  min-width: 180px;
+  min-width: 0;
+}
+
+.filter-control--league {
+  width: 162px;
+}
+
+.filter-control--date {
+  width: 264px;
+}
+
+.filter-control--ev {
+  width: 88px !important;
 }
 
 .ant-select-selector,
 .ant-picker,
 .ant-input-number,
 .ant-btn {
-  min-height: 40px;
+  min-height: 38px;
   border-color: var(--border) !important;
   border-radius: 12px !important;
   background: var(--surface-2) !important;
   box-shadow: none !important;
+}
+
+.filter-card {
+  .ant-select-selector,
+  .ant-picker,
+  .ant-input-number,
+  .ant-btn {
+    height: 38px !important;
+  }
+
+  .ant-select-selection-item,
+  .ant-picker-input > input,
+  .ant-input-number-input {
+    color: var(--text) !important;
+    font-size: 13px !important;
+    font-weight: 560;
+  }
+
+  .ant-picker-input > input::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  .ant-picker-separator,
+  .ant-picker-suffix,
+  .ant-select-arrow,
+  .ant-input-number-prefix {
+    color: var(--text-muted) !important;
+  }
+
+  .ant-input-number-prefix {
+    margin-inline-end: 6px;
+    color: var(--text-secondary) !important;
+    font-size: 12px;
+    font-weight: 650;
+  }
+}
+
+.market-switch.ant-segmented {
+  width: 52px;
+  height: 38px;
+  min-height: 38px;
+  padding: 3px;
+  border: 1px solid var(--primary-border);
+  border-radius: 11px;
+  background: var(--primary-soft) !important;
+}
+
+.market-switch {
+  .ant-segmented-group {
+    height: 30px;
+  }
+
+  .ant-segmented-item,
+  .ant-segmented-item-label {
+    min-height: 30px;
+    border-radius: 8px;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 30px;
+  }
+}
+
+.sync-button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 120px;
+  padding: 0 14px;
+  gap: 8px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 650;
 }
 
 .language-switch.ant-segmented {
