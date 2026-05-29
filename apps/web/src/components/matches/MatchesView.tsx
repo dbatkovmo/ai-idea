@@ -73,7 +73,7 @@ export function MatchesView() {
   const rows = useMemo(() => matchesState.data, [matchesState.data]);
 
   return (
-    <main className="dashboard">
+    <main className="dashboard dashboard--table-page">
       <Flex className="page-header" align="center" justify="space-between" gap={18}>
         <div>
           <Typography.Text className="page-header__eyebrow">
@@ -99,7 +99,7 @@ export function MatchesView() {
       </Card>
 
       <Card
-        className="analytics-card"
+        className="analytics-card table-card"
         title={isRu ? '\u041c\u0430\u0442\u0440\u0438\u0446\u0430 \u0432\u0435\u0440\u043e\u044f\u0442\u043d\u043e\u0441\u0442\u0435\u0439 1X2' : 'Pre-Match Probability Matrix'}
         extra={<Tag className="tag-soft">{isRu ? `${rows.length} \u043c\u0430\u0442\u0447\u0435\u0439` : `${rows.length} matches`}</Tag>}
         variant="borderless"
@@ -123,7 +123,7 @@ export function MatchesView() {
             dataSource={rows}
             pagination={false}
             rowKey="id"
-            scroll={{x: true}}
+            scroll={{x: true, y: 'calc(100vh - 360px)'}}
           />
         )}
       </Card>

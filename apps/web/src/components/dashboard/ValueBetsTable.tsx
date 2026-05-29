@@ -75,9 +75,10 @@ function getColumns(isRu: boolean): TableColumnsType<ValueBet> {
 
 type ValueBetsTableProps = {
   bets: ValueBet[];
+  scrollY?: number | string;
 };
 
-export function ValueBetsTable({bets}: ValueBetsTableProps) {
+export function ValueBetsTable({bets, scrollY}: ValueBetsTableProps) {
   const locale = useLocale();
 
   return (
@@ -87,7 +88,7 @@ export function ValueBetsTable({bets}: ValueBetsTableProps) {
       dataSource={bets}
       pagination={false}
       rowKey="id"
-      scroll={{x: true}}
+      scroll={{x: true, y: scrollY}}
     />
   );
 }

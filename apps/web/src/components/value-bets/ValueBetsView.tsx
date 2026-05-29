@@ -22,7 +22,7 @@ export function ValueBetsView() {
   );
 
   return (
-    <main className="dashboard">
+    <main className="dashboard dashboard--table-page">
       <Flex className="page-header" align="center" justify="space-between" gap={18}>
         <div>
           <Typography.Text className="page-header__eyebrow">
@@ -68,12 +68,12 @@ export function ValueBetsView() {
       </Card>
 
       <Card
-        className="analytics-card"
+        className="analytics-card table-card"
         title={isRu ? '\u041e\u0442\u043e\u0431\u0440\u0430\u043d\u043d\u044b\u0435 1X2-\u0441\u0438\u0433\u043d\u0430\u043b\u044b' : 'Qualified 1X2 Signals'}
         extra={<Tag className="tag-soft">{isRu ? `${filteredBets.length} \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445` : `${filteredBets.length} active`}</Tag>}
         variant="borderless"
       >
-        {filteredBets.length === 0 ? <EmptyState /> : <ValueBetsTable bets={filteredBets} />}
+        {filteredBets.length === 0 ? <EmptyState /> : <ValueBetsTable bets={filteredBets} scrollY="calc(100vh - 360px)" />}
       </Card>
     </main>
   );

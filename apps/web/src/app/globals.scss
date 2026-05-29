@@ -44,6 +44,11 @@ body,
   background-color: var(--bg) !important;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 button,
 input,
 select,
@@ -52,13 +57,17 @@ textarea {
 }
 
 .app-shell {
+  height: 100vh;
   min-height: 100vh;
+  overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(16, 163, 127, 0.05), transparent 32%),
     var(--bg) !important;
 
   &__main {
     min-width: 0;
+    height: 100vh;
+    overflow: hidden;
     background: transparent !important;
   }
 
@@ -182,7 +191,9 @@ textarea {
   }
 
   &__content {
+    height: calc(100vh - 70px);
     padding: 28px 32px 34px;
+    overflow: auto;
     background: transparent;
   }
 
@@ -245,6 +256,19 @@ textarea {
     grid-template-columns: minmax(0, 1.22fr) minmax(340px, 0.78fr);
     gap: 18px;
     align-items: start;
+  }
+}
+
+.dashboard--table-page {
+  min-height: 100%;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.table-card {
+  min-height: 0;
+
+  .ant-card-body {
+    min-height: 0;
   }
 }
 
@@ -523,6 +547,10 @@ textarea {
   .ant-table-container,
   .ant-table-content {
     background: transparent !important;
+  }
+
+  .ant-table-body {
+    scrollbar-color: var(--surface-hover) transparent;
   }
 
   .ant-table-thead > tr > th {
